@@ -13,7 +13,7 @@ namespace WorkScheduleBOT
     class Program
     {
         private static Timer aTimer;
-        private static DateTime LastUpdateExcel;
+        public static DateTime LastUpdateExcel;
         [DllImport("kernel32.dll")]
         static extern IntPtr GetConsoleWindow();
 
@@ -35,9 +35,9 @@ namespace WorkScheduleBOT
         public static List<string> WorkScheduleShift2_Last;
         public static List<string> WorkScheduleShift3_Last;
         public static List<string> WorkScheduleShift4_Last;
+        public static List<UserInSchedule> userInSchedules;
         private static string token { get; set; } = "1912296215:AAHmxbSt7HtFRMTxiwLJ4okS6ummvUfu0Pg";//specialfeaturespp
 
-        //private static string token { get; set; } = "1953282621:AAFyelbHR2cqIQVsLD2TUp1awTJPj4Nqbq8";//calculateSalary
         private static TelegramBotClient client;
         //public static Menu menu { get; set; }
 
@@ -91,7 +91,7 @@ namespace WorkScheduleBOT
                         string TableReadet = "";
                         ExcelArrayObject = new(xslReader.readX(ref TableReadet, "last"));
                         //TableReadet.TrimStart(,)
-                        LastUpDateWorkSheduleLast = TableReadet + "\n";// + DateTime.Now.ToString();
+                        LastUpDateWorkSheduleLast = TableReadet;
                         WorkScheduleShift1_Last = new();
                         WorkScheduleShift2_Last = new();
                         WorkScheduleShift3_Last = new();
@@ -163,7 +163,7 @@ namespace WorkScheduleBOT
                         string TableReadet = "";
                         ExcelArrayObject = new(xslReader.readX(ref TableReadet, "penunlimate"));
 
-                        LastUpDateWorkShedulePenunlimate = TableReadet + "\n";// + DateTime.Now.ToString();
+                        LastUpDateWorkShedulePenunlimate = TableReadet;
 
                         WorkScheduleShift1 = new();
                         WorkScheduleShift2 = new();
@@ -254,7 +254,7 @@ namespace WorkScheduleBOT
                 {
                     await client.SendTextMessageAsync(
                             msg.Chat.Id,
-                            $"Hello",
+                            LastUpdateExcel.ToString(),
                             replyMarkup: WeeksButtons()
                             );
                   
@@ -335,7 +335,7 @@ namespace WorkScheduleBOT
         }
 
       
-        private static IReplyMarkup WeeksButtons()
+        public static IReplyMarkup WeeksButtons()
         {
             return new ReplyKeyboardMarkup
             {
@@ -347,7 +347,7 @@ namespace WorkScheduleBOT
 
             };
         }
-        private static IReplyMarkup ButtonPenunlimited()
+        public static IReplyMarkup ButtonPenunlimited()
         {
             return new ReplyKeyboardMarkup
             {
@@ -357,13 +357,14 @@ namespace WorkScheduleBOT
                     new List<KeyboardButton>{ new KeyboardButton {Text = "зміна 1!" } },
                     new List<KeyboardButton>{ new KeyboardButton {Text = "зміна 2!" } },
                     new List<KeyboardButton>{ new KeyboardButton {Text = "зміна 3!" } },
-                    new List<KeyboardButton>{ new KeyboardButton {Text = "зміна 4!" } }
+                    new List<KeyboardButton>{ new KeyboardButton {Text = "зміна 4!" } },
+                    new List<KeyboardButton>{ new KeyboardButton {Text = "exit" } }
 
                 }
 
             };
         }
-        private static IReplyMarkup ButtonLast()
+        public static IReplyMarkup ButtonLast()
         {
             return new ReplyKeyboardMarkup
             {
@@ -373,7 +374,8 @@ namespace WorkScheduleBOT
                     new List<KeyboardButton>{ new KeyboardButton {Text = "зміна 1" } },
                     new List<KeyboardButton>{ new KeyboardButton {Text = "зміна 2" } },
                     new List<KeyboardButton>{ new KeyboardButton {Text = "зміна 3" } },
-                    new List<KeyboardButton>{ new KeyboardButton {Text = "зміна 4" } }
+                    new List<KeyboardButton>{ new KeyboardButton {Text = "зміна 4" } },
+                    new List<KeyboardButton>{ new KeyboardButton {Text = "exit" } }
 
                 }
 

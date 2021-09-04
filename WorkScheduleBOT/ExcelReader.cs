@@ -39,8 +39,8 @@ namespace WorkScheduleBOT
                     };
                     DataSet dataSet = excelDataReader.AsDataSet(conf);
                     if(nameRead == "penunlimate") { 
-                    table = new(dataSet.Tables[dataSet.Tables.Count - 2].Columns[2].ToString());
-                        table += "\n";
+                    
+                       
                     try
                     {
                         DataRowCollection row = dataSet.Tables[dataSet.Tables.Count - 2].Rows;
@@ -54,17 +54,17 @@ namespace WorkScheduleBOT
                         }
                             for (int i = 0; i < allRowsList[1].Count; i++)
                             {
-                                if (allRowsList[1][i] is string) table += allRowsList[1][i].ToString() + ',';
+                                if (allRowsList[1][i] is string) table += allRowsList[1][i].ToString() + ' ';
                             }
-                    }
+                            table += dataSet.Tables[dataSet.Tables.Count - 2].Columns[2].ToString();
+                        }
                     catch (Exception)
                     {
                     }
                     }
                     else if (nameRead == "last")
                     {
-                        table = new(dataSet.Tables[dataSet.Tables.Count - 1].Columns[2].ToString());
-                        table += "\n";
+                        
                         try
                         {
                             DataRowCollection row = dataSet.Tables[dataSet.Tables.Count - 1].Rows;
@@ -78,8 +78,11 @@ namespace WorkScheduleBOT
                             }
                             for (int i = 0; i < allRowsList[1].Count; i++)
                             {
-                                if (allRowsList[1][i] is string) table += allRowsList[1][i].ToString() + ',';
+                                if (allRowsList[1][i] is string) table += allRowsList[1][i].ToString() + ' ';
                             }
+                           
+                            table += dataSet.Tables[dataSet.Tables.Count - 1].Columns[2].ToString();
+                           
                         }
                         catch (Exception)
                         {

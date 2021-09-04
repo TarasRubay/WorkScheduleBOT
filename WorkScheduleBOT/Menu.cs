@@ -25,25 +25,14 @@ namespace WorkScheduleBOT
                     }
                 await client.SendTextMessageAsync(
                 msg.Chat.Id,
-                $"виберіть зміну",
-                replyMarkup: WeeksButtons()
+                Program.LastUpdateExcel.ToString(),
+                replyMarkup: Program.WeeksButtons()
                 );
             }
             catch (Exception ex)
             {
                 await client.SendTextMessageAsync(msg.Chat.Id, ex.ToString());
             }
-        }
-        private static IReplyMarkup WeeksButtons()
-        {
-            return new ReplyKeyboardMarkup
-            {
-                Keyboard = new List<List<KeyboardButton>>
-                {
-                    new List<KeyboardButton>{ new KeyboardButton {Text = Program.LastUpDateWorkShedulePenunlimate } },
-                    new List<KeyboardButton>{ new KeyboardButton {Text = Program.LastUpDateWorkSheduleLast } }
-                }
-            };
         }
     }
 }
