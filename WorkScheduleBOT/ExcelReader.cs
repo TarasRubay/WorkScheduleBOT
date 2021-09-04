@@ -18,7 +18,7 @@ namespace WorkScheduleBOT
             excelFile = Path;
         }
        
-        public List<List<object>> readX(ref string table)
+        public List<List<object>> readX(ref string table,string nameRead)
         {
 
             List<object> rowDataList = null;
@@ -26,13 +26,10 @@ namespace WorkScheduleBOT
             try
             {
 
-
                 System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
                 using (var stream = System.IO.File.Open(excelFile, FileMode.Open, FileAccess.Read))
                 {
-
                     IExcelDataReader excelDataReader = ExcelDataReader.ExcelReaderFactory.CreateReader(stream);
-
                     var conf = new ExcelDataSetConfiguration()
                     {
                         ConfigureDataTable = a => new ExcelDataTableConfiguration
@@ -40,17 +37,13 @@ namespace WorkScheduleBOT
                             UseHeaderRow = true
                         }
                     };
-
                     DataSet dataSet = excelDataReader.AsDataSet(conf);
-
-                    table = new(dataSet.Tables[dataSet.Tables.Count - 1].Columns[2].ToString());
-
-
+                    if(nameRead == "penunlimate") { 
+                    table = new(dataSet.Tables[dataSet.Tables.Count - 2].Columns[2].ToString());
+                        table += "\n";
                     try
                     {
-
-                        DataRowCollection row = dataSet.Tables[dataSet.Tables.Count - 1].Rows;
-
+                        DataRowCollection row = dataSet.Tables[dataSet.Tables.Count - 2].Rows;
                         foreach (DataRow item in row)
                         {
                             if (item is not null)
@@ -59,19 +52,43 @@ namespace WorkScheduleBOT
                                 allRowsList.Add(rowDataList); //adding the above list of each row to another list
                             }
                         }
-
+                            for (int i = 0; i < allRowsList[1].Count; i++)
+                            {
+                                if (allRowsList[1][i] is string) table += allRowsList[1][i].ToString() + ',';
+                            }
                     }
                     catch (Exception)
                     {
-
-
+                    }
+                    }
+                    else if (nameRead == "last")
+                    {
+                        table = new(dataSet.Tables[dataSet.Tables.Count - 1].Columns[2].ToString());
+                        table += "\n";
+                        try
+                        {
+                            DataRowCollection row = dataSet.Tables[dataSet.Tables.Count - 1].Rows;
+                            foreach (DataRow item in row)
+                            {
+                                if (item is not null)
+                                {
+                                    rowDataList = item.ItemArray.ToList(); //list of each rows
+                                    allRowsList.Add(rowDataList); //adding the above list of each row to another list
+                                }
+                            }
+                            for (int i = 0; i < allRowsList[1].Count; i++)
+                            {
+                                if (allRowsList[1][i] is string) table += allRowsList[1][i].ToString() + ',';
+                            }
+                        }
+                        catch (Exception)
+                        {
+                        }
                     }
                 }
             }
             catch (Exception)
             {
-
-
             }
             return allRowsList;
         }
