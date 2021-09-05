@@ -36,7 +36,7 @@ namespace WorkScheduleBOT
         public static List<string> WorkScheduleShift3_Last;
         public static List<string> WorkScheduleShift4_Last;
         public static List<UserInSchedule> userInSchedules;
-        private static string token { get; set; } = "1912296215:AAHmxbSt7HtFRMTxiwLJ4okS6ummvUfu0Pg";//specialfeaturespp
+        private static string token { get; set; } = "1973483435:AAEhUsog6N9nGLQ0SJ_GxJb4nXd2Mo40Blk";//Work Shedule spp
 
         private static TelegramBotClient client;
         //public static Menu menu { get; set; }
