@@ -36,7 +36,8 @@ namespace WorkScheduleBOT
         public static List<string> WorkScheduleShift3_Last;
         public static List<string> WorkScheduleShift4_Last;
         public static List<UserInSchedule> userInSchedules;
-        private static string token { get; set; } = "1973483435:AAEhUsog6N9nGLQ0SJ_GxJb4nXd2Mo40Blk";//Work Shedule spp
+        //private static string token { get; set; } = "1973483435:AAEhUsog6N9nGLQ0SJ_GxJb4nXd2Mo40Blk";//Work Shedule spp
+        private static string token { get; set; } = "1912296215:AAHmxbSt7HtFRMTxiwLJ4okS6ummvUfu0Pg";//feature spp
 
         private static TelegramBotClient client;
         //public static Menu menu { get; set; }
@@ -70,11 +71,19 @@ namespace WorkScheduleBOT
             {}
             dataManager.SaveData(Users);
         }
-        private static void OnTimedEvent(Object source, System.Timers.ElapsedEventArgs e)
+        private static async void OnTimedEvent(Object source, System.Timers.ElapsedEventArgs e)
         {
             Console.WriteLine($"{LastUpdateExcel} {e.SignalTime}");
             if (LastUpdateExcel < new FileInfo(pathXLS).LastWriteTime)
             {
+                if (LastUpdateExcel > new DateTime(2020, 12, 1))
+                {
+                    foreach (var item in Users)
+                    {
+                        await client.SendTextMessageAsync(item.Id, $"Schedule Up to date\n{new FileInfo(pathXLS).LastWriteTime}");
+                    }
+
+                }
                 try
                 {
                     // Create an instance of StreamReader to read from a file.
@@ -86,7 +95,7 @@ namespace WorkScheduleBOT
                     }
                     try
                     {
-
+                        
                         ExcelReader xslReader = new(pathXLS);
                         string TableReadet = "";
                         ExcelArrayObject = new(xslReader.readX(ref TableReadet, "last"));
@@ -252,6 +261,7 @@ namespace WorkScheduleBOT
             {
                 if (us is not null)
                 {
+                    us.CountRequest++;
                     await client.SendTextMessageAsync(
                             msg.Chat.Id,
                             LastUpdateExcel.ToString(),
@@ -302,7 +312,7 @@ namespace WorkScheduleBOT
                         int num = 1;
                         foreach (var item in Program.Users)
                         {
-                            await client.SendTextMessageAsync(msg.Chat.Id, $"\n {num++} {item.Name} {item.Surname}");
+                            await client.SendTextMessageAsync(msg.Chat.Id, $"\n {num++} {item.Name} {item.Surname} [Request = {item.CountRequest}]");
                         }
                             break;
                         default:
@@ -311,9 +321,11 @@ namespace WorkScheduleBOT
                 }
                 else
                 {
+                     
+                    if (msg.Text == "4653") {
                         await client.SendTextMessageAsync(
                             msg.Chat.Id,
-                            $"Новий користувач {msg.Chat.FirstName} {msg.Chat.LastName}",
+                            $"Новий користувач {msg.Chat.FirstName} {msg.Chat.LastName}\naccepted",
                             replyMarkup: WeeksButtons()
                             );
                         if (!Users.Exists(it => it.Id == msg.From.Id))
@@ -322,10 +334,19 @@ namespace WorkScheduleBOT
                             {
                                 Id = e.Message.From.Id,
                                 Name = e.Message.From.FirstName,
-                                Surname = e.Message.From.LastName
+                                Surname = e.Message.From.LastName,
+                                CountRequest = 0
                             });
                             dataManager.SaveData(Users);
                         }
+                    }
+                    else
+                    {
+                        await client.SendTextMessageAsync(
+                         msg.Chat.Id,
+                         $"Новий користувач {msg.Chat.FirstName} {msg.Chat.LastName}\nenter pincode:"
+                         );
+                    }
                 }
             }
             catch (Exception)
