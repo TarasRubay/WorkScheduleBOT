@@ -69,17 +69,8 @@ namespace WorkScheduleBOT
             NotifyNewWeek?.Invoke($"{Name}\nдодано {lastWeek} тиждень\n{message}");
         }
         public void MailingHospital()
-        {
-            var lastWeek = Program.ListWeeks[^1];
-            string message = "";
-            foreach (var item in Schedule)
-            {
-                if (item.Week == lastWeek && item.positionShift != "вільно")
-                {
-                    message += item + "\n";
-                }
-            }
-            NotifyHospital?.Invoke($"{Name}\nдодано {lastWeek} тиждень\n{message}");
+        {  
+            NotifyHospital?.Invoke($"{Name}\n лікарняне");
         }
     }
 }

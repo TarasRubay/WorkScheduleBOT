@@ -94,6 +94,16 @@ namespace WorkScheduleBOT
                     }
                         user.LastMessage = "empty";
                     break;
+                    
+                case "hello all old":
+                    foreach (var item in Program.UsersOld)
+                    {
+                        await client.SendTextMessageAsync(item.Id, msg.Text);
+
+                    }
+                        user.LastMessage = "empty";
+                    break;
+
 
                 case ViewUser:
                     await client.SendTextMessageAsync(
@@ -154,7 +164,8 @@ namespace WorkScheduleBOT
                 case "bot?":
                         await client.SendTextMessageAsync(msg.Chat.Id,
                             $"users - view list users\n" +
-                            $"hello all - write message to all users"
+                            $"hello all - write message to all users" +
+                            $"hello all old - write message to all users"
                             );
                     break;
                 case "users":
@@ -221,7 +232,14 @@ namespace WorkScheduleBOT
                     );
                     user.LastMessage = WriteAll;
                     break;
-               
+
+                case "hello all old":
+                    await client.SendTextMessageAsync(
+                    msg.Chat.Id,
+                    $"напишіть повідомлення для всіх"
+                    );
+                    user.LastMessage = "hello all old";
+                    break;
 
                 default:
                     break;

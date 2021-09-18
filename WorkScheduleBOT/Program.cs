@@ -26,6 +26,7 @@ namespace WorkScheduleBOT
         const int SW_SHOW = 5;
         public static double StillProcent { get; set; }
         public static List<User> Users { get; set; }
+        public static List<User> UsersOld { get; set; }
         public static List<List<object>> ExcelArrayObject;
         public static string LastUpDateWorkShedulePenunlimate;
         public static string LastUpDateWorkSheduleLast;
@@ -62,7 +63,8 @@ namespace WorkScheduleBOT
             var handle = GetConsoleWindow();
             dataManager = new(path, "empty",pathJSON);
             Users = new();
-            //Users = dataManager.LoadData();
+            UsersOld = new();
+            UsersOld = dataManager.LoadData();
             StartBot();
             Users = dataManager.LoadDataJSON();
             
@@ -83,9 +85,14 @@ namespace WorkScheduleBOT
                     {
                         usInSch.NotifyShift += item.MessageFromUser;
                         usInSch.NotifyNewWeek += item.MessageFromUser;
-                        usInSch.NotifyHospital += item.MessageFromUser;
                     }
+
                 }
+                //foreach (var us in ListUserSchedule)
+                //{
+
+                //        us.NotifyHospital += item.MessageFromUser;
+                //}
             }
             aTimer = new System.Timers.Timer();
             try
@@ -133,17 +140,29 @@ namespace WorkScheduleBOT
                     TableReadet = "";
                     nameRead = "penunlimate";
                     ExcelArrayObject = new(xslReader.readX(ref TableReadet, ref nameRead));
-                    Menu.CheckUpdateInScedule(client, ExcelArrayObject, nameRead);
+                    List<string> listHospital = Menu.CheckUpdateInScedule(client, ExcelArrayObject, nameRead);
+                    //foreach (var item in listHospital)
+                    //{
+                    //    var us = ListUserSchedule.Find(u => u.Name == item);
+                    //    if (us is not null) us.MailingHospital();
+                    //    Console.WriteLine("send hosp not.");
+                    //}
                     Console.WriteLine("update penunlimited");
                 }
                 else
                 {
-                    Menu.CreatingUsersInScheduleSecondStartNew(client, ExcelArrayObject, nameRead);
+                    List<string> listHospital = Menu.CreatingUsersInScheduleSecondStartNew(client, ExcelArrayObject, nameRead);
                     foreach (var item in ListUserSchedule)
                     {
                         item.MailingByAddNewWeek();
                     }
                     Console.WriteLine("Add new week");
+                    //foreach (var item in listHospital)
+                    //{
+                    //    var us = ListUserSchedule.Find(u => u.Name == item);
+                    //    if (us is not null) us.MailingHospital();
+                    //    Console.WriteLine("send hosp not.");
+                    //}
                 }
             }
             catch (Exception Ex)
@@ -154,7 +173,7 @@ namespace WorkScheduleBOT
             }
 
         }
-        public static async void StartBot()
+        public static void StartBot()
         {
                 try
                 {

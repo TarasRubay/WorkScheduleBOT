@@ -302,8 +302,9 @@ namespace WorkScheduleBOT
             }
             
         }
-        public static void CreatingUsersInScheduleSecondStartNew(TelegramBotClient client, List<List<object>> ExcelArrayObject, string nameRead)
+        public static List<string> CreatingUsersInScheduleSecondStartNew(TelegramBotClient client, List<List<object>> ExcelArrayObject, string nameRead)
         {
+            List<string> listHospital = new();
             try
             {
                 var arrNameRead = nameRead.Split(" ");
@@ -328,7 +329,7 @@ namespace WorkScheduleBOT
                 {
                     if (ExcelArrayObject[i][1] is not null)
                     {
-
+                        bool checkHospital = false;
                         if (ExcelArrayObject[i][0].ToString().Trim() == "1")
                             countShift++;
                         string tmp = ExcelArrayObject[i][1].ToString().Trim();
@@ -338,6 +339,7 @@ namespace WorkScheduleBOT
                         {
                             if (ExcelArrayObject[i][j] is not null)
                             {
+                                
                                 Shift shift = new();
                                 if (indFirstNum == -1 || j >= indFirstNum)
                                 {
@@ -370,6 +372,7 @@ namespace WorkScheduleBOT
                                 if (ExcelArrayObject[i][j].ToString().Length > 0)
                                 {
                                     shift.positionShift = ExcelArrayObject[i][j].ToString().Trim();
+                                    if (ExcelArrayObject[i][j].ToString().ToLower().Trim() == "л") checkHospital = true;
                                 }
                                 else
                                 {
@@ -399,7 +402,7 @@ namespace WorkScheduleBOT
                             }
 
                         }
-
+                        if (checkHospital) listHospital.Add(tmp);
                     }
 
 
@@ -411,6 +414,7 @@ namespace WorkScheduleBOT
                 //await client.SendTextMessageAsync(Program.Users[0].Id, Ex.Message);
                 Console.WriteLine(Ex.Message);
             }
+            return listHospital;
         }
         public static List<string> CheckUpdateInScedule(TelegramBotClient client, List<List<object>> ExcelArrayObject, string nameRead)
         {
@@ -438,7 +442,7 @@ namespace WorkScheduleBOT
                 {
                     if (ExcelArrayObject[i][1] is not null)
                     {
-
+                        bool checkHospital = false;
 
                         if (ExcelArrayObject[i][0].ToString().Trim() == "1")
                             countShift++;
@@ -480,6 +484,7 @@ namespace WorkScheduleBOT
                                 if (ExcelArrayObject[i][j].ToString().Length > 0)
                                 {
                                     shift.positionShift = ExcelArrayObject[i][j].ToString().Trim();
+                                    if (ExcelArrayObject[i][j].ToString().ToLower().Trim() == "л") checkHospital = true;
                                 }
                                 else
                                 {
@@ -508,7 +513,7 @@ namespace WorkScheduleBOT
                             }
 
                         }
-
+                        if(checkHospital)listHospital.Add(tmp);
                     }
 
 
