@@ -18,7 +18,7 @@ namespace WorkScheduleBOT
             excelFile = Path;
         }
        
-        public List<List<object>> readX(ref string table,string nameRead)
+        public List<List<object>> readX(ref string table,ref string nameRead)
         {
 
             List<object> rowDataList = null;
@@ -56,7 +56,18 @@ namespace WorkScheduleBOT
                             {
                                 if (allRowsList[1][i] is string) table += allRowsList[1][i].ToString() + ' ';
                             }
-                            table += dataSet.Tables[dataSet.Tables.Count - 2].Columns[2].ToString();
+                            nameRead = dataSet.Tables[dataSet.Tables.Count - 2].Columns[2].ToString();
+                            int index = 0;
+                            for (int i = 0; i < nameRead.Length; i++)
+                            {
+                                if (nameRead[i] != ' ')
+                                {
+                                    index = i;
+                                    break;
+                                }
+                            }
+                            nameRead = nameRead.Remove(0, index);
+                            table += '\n' + nameRead;
                         }
                     catch (Exception)
                     {
@@ -81,8 +92,18 @@ namespace WorkScheduleBOT
                                 if (allRowsList[1][i] is string) table += allRowsList[1][i].ToString() + ' ';
                             }
                            
-                            table += dataSet.Tables[dataSet.Tables.Count - 1].Columns[2].ToString();
-                           
+                            nameRead = dataSet.Tables[dataSet.Tables.Count - 1].Columns[2].ToString();
+                            int index = 0;
+                            for (int i = 0; i < nameRead.Length; i++)
+                            {
+                                if (nameRead[i] != ' ')
+                                {
+                                    index = i;
+                                    break;
+                                }
+                            }
+                            nameRead = nameRead.Remove(0, index);
+                            table += '\n' + nameRead;
                         }
                         catch (Exception)
                         {

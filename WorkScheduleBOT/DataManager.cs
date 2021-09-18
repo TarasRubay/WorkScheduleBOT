@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace WorkScheduleBOT
@@ -11,11 +13,13 @@ namespace WorkScheduleBOT
     class DataManager
     {
         public string Path { get; private set; } = "";
+        public string PathJSON { get; private set; } = "";
         public string PathStillProcent { get; private set; } = "";
-        public DataManager(string path, string stillProcent)
+        public DataManager(string path, string stillProcent , string jsonPath)
         {
             Path = path;
             PathStillProcent = stillProcent;
+            PathJSON = jsonPath;
         }
 
         public void SaveData(List<User> users)
@@ -31,6 +35,39 @@ namespace WorkScheduleBOT
             {
                 Console.WriteLine(e.Message);
             }
+        }
+        public void SaveDataJSON(List<User> users)
+        {
+            try
+            {
+                
+                //using FileStream fileStream = File.Create(PathJSON);
+                string jsonUs = System.Text.Json.JsonSerializer.Serialize(users);
+                File.WriteAllText(PathJSON,jsonUs);
+                Console.WriteLine($"Save data in {PathJSON}");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
+        public List<User> LoadDataJSON()
+        {
+            List<User> users = new();
+            try
+            {
+                using (StreamReader r = new StreamReader(PathJSON))
+                {
+                    string json = r.ReadToEnd();
+                    users = JsonConvert.DeserializeObject<List<User>>(json);
+                }
+                Console.WriteLine($"Load data from {PathJSON}");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            return users;
         }
         public List<User> LoadData()
         {
