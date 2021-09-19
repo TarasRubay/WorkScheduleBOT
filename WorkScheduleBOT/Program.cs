@@ -117,8 +117,8 @@ namespace WorkScheduleBOT
         }
         public static void StartReading()
         {
-            Console.WriteLine("Thread.Sleep(5000);");
-            Thread.Sleep(5000);
+            Console.WriteLine("Thread.Sleep(10000);");
+            Thread.Sleep(10000);
             try
             {
                 using (StreamReader sr = new StreamReader(pathXLS))
