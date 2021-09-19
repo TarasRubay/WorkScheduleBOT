@@ -236,7 +236,7 @@ namespace WorkScheduleBOT
                 case "hello all old":
                     await client.SendTextMessageAsync(
                     msg.Chat.Id,
-                    $"напишіть повідомлення для всіх"
+                    $"напишіть повідомлення для всіх old"
                     );
                     user.LastMessage = "hello all old";
                     break;
