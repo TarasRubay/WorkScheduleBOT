@@ -228,12 +228,12 @@ namespace WorkScheduleBOT
                                     if (ExcelArrayObject[0][j].ToString().Trim() == "ніч")
                                     {
                                         shift.NameOfShift = ExcelArrayObject[0][j - 1].ToString().Trim() + " " + ExcelArrayObject[0][j].ToString().Trim();// + " " + ExcelArrayObject[1][j - 1].ToString() + ", ";
-                                        shift.Date = new(YearNow, MountNow, Int32.Parse(ExcelArrayObject[1][j - 1].ToString().Trim()));
+                                        shift.Date = new(YearNow, MountNow, Int32.Parse(ExcelArrayObject[1][j - 1].ToString().Trim()), 23, 59, 59);
                                     }
                                     else
                                     {
                                         shift.NameOfShift = ExcelArrayObject[0][j].ToString().Trim() + " день ";// + ExcelArrayObject[1][j].ToString();
-                                        shift.Date = new(YearNow, MountNow, Int32.Parse(ExcelArrayObject[1][j].ToString().Trim()));
+                                        shift.Date = new(YearNow, MountNow, Int32.Parse(ExcelArrayObject[1][j].ToString().Trim()), 23, 59, 59);
                                     }
                                 }
                                 else if (j < indFirstNum)
@@ -241,12 +241,12 @@ namespace WorkScheduleBOT
                                     if (ExcelArrayObject[0][j].ToString().Trim() == "ніч")
                                     {
                                         shift.NameOfShift = ExcelArrayObject[0][j - 1].ToString().Trim() + " " + ExcelArrayObject[0][j].ToString().Trim();// + " " + ExcelArrayObject[1][j - 1].ToString() + ", ";
-                                        shift.Date = new(YearNow, MountNow - 1, Int32.Parse(ExcelArrayObject[1][j - 1].ToString().Trim()));
+                                        shift.Date = new(YearNow, MountNow - 1, Int32.Parse(ExcelArrayObject[1][j - 1].ToString().Trim()), 23, 59, 59);
                                     }
                                     else
                                     {
                                         shift.NameOfShift = ExcelArrayObject[0][j].ToString().Trim() + " день ";// + ExcelArrayObject[1][j].ToString();
-                                        shift.Date = new(YearNow, MountNow - 1, Int32.Parse(ExcelArrayObject[1][j].ToString().Trim()));
+                                        shift.Date = new(YearNow, MountNow - 1, Int32.Parse(ExcelArrayObject[1][j].ToString().Trim()), 23, 59, 59);
                                     }
                                 }
 
@@ -346,12 +346,12 @@ namespace WorkScheduleBOT
                                     if (ExcelArrayObject[0][j].ToString().Trim() == "ніч")
                                     {
                                         shift.NameOfShift = ExcelArrayObject[0][j - 1].ToString().Trim() + " " + ExcelArrayObject[0][j].ToString().Trim();// + " " + ExcelArrayObject[1][j - 1].ToString() + ", ";
-                                        shift.Date = new(YearNow, MountNow, Int32.Parse(ExcelArrayObject[1][j - 1].ToString().Trim()));
+                                        shift.Date = new(YearNow, MountNow, Int32.Parse(ExcelArrayObject[1][j - 1].ToString().Trim()), 23, 59, 59);
                                     }
                                     else
                                     {
                                         shift.NameOfShift = ExcelArrayObject[0][j].ToString().Trim().Trim() + " день ";
-                                        shift.Date = new(YearNow, MountNow, Int32.Parse(ExcelArrayObject[1][j].ToString().Trim()));
+                                        shift.Date = new(YearNow, MountNow, Int32.Parse(ExcelArrayObject[1][j].ToString().Trim()), 23, 59, 59);
                                     }
                                 }
                                 else if (j < indFirstNum)
@@ -359,12 +359,12 @@ namespace WorkScheduleBOT
                                     if (ExcelArrayObject[0][j].ToString().Trim() == "ніч")
                                     {
                                         shift.NameOfShift = ExcelArrayObject[0][j - 1].ToString().Trim() + " " + ExcelArrayObject[0][j].ToString().Trim();// + " " + ExcelArrayObject[1][j - 1].ToString() + ", ";
-                                        shift.Date = new(YearNow, MountNow - 1, Int32.Parse(ExcelArrayObject[1][j - 1].ToString().Trim()));
+                                        shift.Date = new(YearNow, MountNow - 1, Int32.Parse(ExcelArrayObject[1][j - 1].ToString().Trim()), 23, 59, 59);
                                     }
                                     else
                                     {
                                         shift.NameOfShift = ExcelArrayObject[0][j].ToString().Trim().Trim() + " день ";// + ExcelArrayObject[1][j].ToString();
-                                        shift.Date = new(YearNow, MountNow - 1, Int32.Parse(ExcelArrayObject[1][j].ToString().Trim()));
+                                        shift.Date = new(YearNow, MountNow - 1, Int32.Parse(ExcelArrayObject[1][j].ToString().Trim()), 23, 59, 59);
                                     }
                                 }
 
@@ -458,12 +458,12 @@ namespace WorkScheduleBOT
                                     if (ExcelArrayObject[0][j].ToString().Trim() == "ніч")
                                     {
                                         shift.NameOfShift = ExcelArrayObject[0][j - 1].ToString().Trim() + " " + ExcelArrayObject[0][j].ToString().Trim();// + " " + ExcelArrayObject[1][j - 1].ToString() + ", ";
-                                        shift.Date = new(YearNow, MountNow, Int32.Parse(ExcelArrayObject[1][j - 1].ToString().Trim()));
+                                        shift.Date = new(YearNow, MountNow, Int32.Parse(ExcelArrayObject[1][j - 1].ToString().Trim()),23,59,59);
                                     }
                                     else
                                     {
                                         shift.NameOfShift = ExcelArrayObject[0][j].ToString().Trim() + " день ";// + ExcelArrayObject[1][j].ToString();
-                                        shift.Date = new(YearNow, MountNow, Int32.Parse(ExcelArrayObject[1][j].ToString().Trim()));
+                                        shift.Date = new(YearNow, MountNow, Int32.Parse(ExcelArrayObject[1][j].ToString().Trim()), 23, 59, 59);
                                     }
                                 }
                                 else if (j < indFirstNum)
@@ -471,12 +471,12 @@ namespace WorkScheduleBOT
                                     if (ExcelArrayObject[0][j].ToString().Trim() == "ніч")
                                     {
                                         shift.NameOfShift = ExcelArrayObject[0][j - 1].ToString().Trim() + " " + ExcelArrayObject[0][j].ToString().Trim();// + " " + ExcelArrayObject[1][j - 1].ToString() + ", ";
-                                        shift.Date = new(YearNow, MountNow - 1, Int32.Parse(ExcelArrayObject[1][j - 1].ToString().Trim()));
+                                        shift.Date = new(YearNow, MountNow - 1, Int32.Parse(ExcelArrayObject[1][j - 1].ToString().Trim()), 23, 59, 59);
                                     }
                                     else
                                     {
                                         shift.NameOfShift = ExcelArrayObject[0][j].ToString().Trim() + " день ";// + ExcelArrayObject[1][j].ToString();
-                                        shift.Date = new(YearNow, MountNow - 1, Int32.Parse(ExcelArrayObject[1][j].ToString().Trim()));
+                                        shift.Date = new(YearNow, MountNow - 1, Int32.Parse(ExcelArrayObject[1][j].ToString().Trim()), 23, 59, 59);
                                     }
                                 }
 

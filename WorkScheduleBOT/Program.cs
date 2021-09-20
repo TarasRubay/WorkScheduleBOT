@@ -469,7 +469,25 @@ namespace WorkScheduleBOT
                 client.SendTextMessageAsync(user.Id,e);
                 }
             }
-
+        public static string WriteMessage;
+        public static void WriteAllUsers()
+        {
+            foreach (var item in Program.Users)
+            {
+                 client.SendTextMessageAsync(item.Id, WriteMessage);
+                Thread.Sleep(1000);
+            }
+        }
         
+        public static string WriteMessage2;
+        public static void WriteAllUsers2()
+        {
+            foreach (var item in UsersOld)
+            {
+                client.SendTextMessageAsync(item.Id, WriteMessage2);
+                Thread.Sleep(1000);
+
+            }
+        }
     }
 }

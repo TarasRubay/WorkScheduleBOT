@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Args;
@@ -14,9 +15,10 @@ namespace WorkScheduleBOT
 {
     public class MenuUser
     {
-    
+       
         public static async void IncomenMessage(TelegramBotClient client, User user, MessageEventArgs e)
         {
+            
             DataManager dataManager = new("empty", "empty", Program.pathJSON);
             user.CountRequest++;
             var msg = e.Message;
@@ -87,15 +89,19 @@ namespace WorkScheduleBOT
                     
                     break;
                 case WriteAll:
-                    foreach (var item in Program.Users)
-                    {
-                        await client.SendTextMessageAsync(item.Id, msg.Text);
-
-                    }
-                        user.LastMessage = "empty";
+                    Program.WriteMessage = msg.Text;
+                    Thread thread = new Thread(new ThreadStart(Program.WriteAllUsers));
+                    thread.Start();
+                   
+                    user.LastMessage = "empty";
                     break;
                     
                 case "hello all old":
+
+                    Program.WriteMessage2 = msg.Text;
+                    Thread thread2 = new Thread(new ThreadStart(Program.WriteAllUsers2));
+                    thread2.Start();
+                    
                     foreach (var item in Program.UsersOld)
                     {
                         await client.SendTextMessageAsync(item.Id, msg.Text);
@@ -254,6 +260,7 @@ namespace WorkScheduleBOT
             public const string ExitProfMenu  = ".вийти";
             public const string Exit  = "вийти";
            
+        
         
         public static IReplyMarkup AllEmployers()
         {

@@ -37,7 +37,7 @@ namespace WorkScheduleBOT
             {
                 
                 
-                if (item.PositionShift != "вільно" && item.Date > DateTime.Now)
+                if (item.PositionShift != "вільно" && item.Date > new DateTime(2021,8,30))
                 {
                     seq += item + "\n";
                     
