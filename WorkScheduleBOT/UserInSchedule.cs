@@ -31,18 +31,15 @@ namespace WorkScheduleBOT
 
         public string ViewShifts()
         {
-            
+           
             string seq = $"{Name} [зм {Shift}]\n";
             foreach (var item in Schedule)
             {
-                
-                
-                if (item.PositionShift != "вільно" && item.Date > DateTime.Now)
+                if (item.PositionShift != "вільно" && item.Date >= DateTime.Now)
                 {
                     seq += item + "\n";
-                    
+
                 }
-                
             }
             return seq;
         }

@@ -45,17 +45,17 @@ namespace WorkScheduleBOT
         public static List<UserInSchedule> ListUserSchedule = new();
         public static List<string> usersList;
         public static List<string> ListWeeks { get; set; } = new();
-        //private static string token { get; set; } = "1973483435:AAEhUsog6N9nGLQ0SJ_GxJb4nXd2Mo40Blk";//Work Shedule spp
-        private static string token { get; set; } = "1912296215:AAHmxbSt7HtFRMTxiwLJ4okS6ummvUfu0Pg";//feature spp
+        private static string token { get; set; } = "1973483435:AAEhUsog6N9nGLQ0SJ_GxJb4nXd2Mo40Blk";//Work Shedule spp
+        //private static string token { get; set; } = "1912296215:AAHmxbSt7HtFRMTxiwLJ4okS6ummvUfu0Pg";//feature spp
         
 
         private static TelegramBotClient client;
         //public static Menu menu { get; set; }
 
         public static DataManager dataManager;
-        public static string path = @"tel2.bin";
+        public static string path = @"tel.bin";
         public static string pathJSON = @"UsersList.json";
-        public static string pathXLS = @"C:\Users\Rubay-PC\My Drive\bot\2 ГРАФІК ОПЕРАТОРИ.xlsx";
+        public static string pathXLS = @"D:\Documents\bot\WorkScheduleBOT\WorkScheduleBOT\bin\Debug\net5.0\2 ГРАФІК ОПЕРАТОРИ.xlsx";
         public static bool UpdateIsComplited = false;
         static void Main(string[] args)
         {
@@ -106,8 +106,8 @@ namespace WorkScheduleBOT
             aTimer.Elapsed += OnTimedEvent2;
             aTimer.AutoReset = true;
             aTimer.Enabled = true;
-                //ShowWindow(handle, SW_HIDE);
-                ShowWindow(handle, SW_SHOW);
+                ShowWindow(handle, SW_HIDE);
+                //ShowWindow(handle, SW_SHOW);
                 Console.Read();
                 client.StopReceiving();
             }
@@ -469,7 +469,24 @@ namespace WorkScheduleBOT
                 client.SendTextMessageAsync(user.Id,e);
                 }
             }
+        public static string WriteMessage;
+        public static void WriteAllUsers()
+        {
+            foreach (var item in Program.Users)
+            {
+                client.SendTextMessageAsync(item.Id, WriteMessage);
+                Thread.Sleep(1000);
+            }
+        }
+        public static string WriteMessage2;
+        public static void WriteAllUsers2()
+        {
+            foreach (var item in UsersOld)
+            {
+                client.SendTextMessageAsync(item.Id, WriteMessage2);
+                Thread.Sleep(1000);
 
-        
+            }
+        }
     }
 }

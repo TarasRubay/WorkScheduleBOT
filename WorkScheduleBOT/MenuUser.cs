@@ -9,6 +9,7 @@ using Telegram.Bot;
 using Telegram.Bot.Args;
 using Telegram.Bot.Types.ReplyMarkups;
 using static System.Net.Mime.MediaTypeNames;
+using System.Threading;
 
 namespace WorkScheduleBOT
 {
@@ -87,21 +88,18 @@ namespace WorkScheduleBOT
                     
                     break;
                 case WriteAll:
-                    foreach (var item in Program.Users)
-                    {
-                        await client.SendTextMessageAsync(item.Id, msg.Text);
+                    Program.WriteMessage = msg.Text;
+                    Thread thread = new Thread(new ThreadStart(Program.WriteAllUsers));
+                    thread.Start();
 
-                    }
-                        user.LastMessage = "empty";
+                    user.LastMessage = "empty";
                     break;
                     
                 case "hello all old":
-                    foreach (var item in Program.UsersOld)
-                    {
-                        await client.SendTextMessageAsync(item.Id, msg.Text);
-
-                    }
-                        user.LastMessage = "empty";
+                    Program.WriteMessage2 = msg.Text;
+                    Thread thread2 = new Thread(new ThreadStart(Program.WriteAllUsers2));
+                    thread2.Start();
+                    user.LastMessage = "empty";
                     break;
 
 
@@ -242,6 +240,7 @@ namespace WorkScheduleBOT
                     break;
 
                 default:
+                   
                     break;
             }
         }
