@@ -18,27 +18,80 @@ namespace WorkScheduleBOT
     
         public static async void IncomenMessage(TelegramBotClient client, User user, MessageEventArgs e)
         {
+           // Thread.Sleep(100);
             DataManager dataManager = new("empty", "empty", Program.pathJSON);
             user.CountRequest++;
             var msg = e.Message;
-            if (msg.Text == Exit || msg.Text == "/start")
+            if (msg.Text is not null && msg.Text == Exit || msg.Text == "/start")
             {
+                try
+                {
                 user.LastMessage = "empty";
                 await client.SendTextMessageAsync(
                             msg.Chat.Id,
                             $"основне меню",
                             replyMarkup: ButtonStart()
                             );
-            }else if(msg.Text == ExitProfMenu)
-            {
-                user.LastMessage = "empty";
-                await client.SendTextMessageAsync(
-                            msg.Chat.Id,
-                            $"розширене меню",
-                            replyMarkup: ProfMenu()
-                            );
+                }
+                catch (Exception)
+                { }
+                }else if(msg.Text == ExitProfMenu)
+                {
+
+                try
+                {
+                    if (msg.Chat.Id == 1143288883)
+                    {
+                        await client.SendTextMessageAsync(
+                                    msg.Chat.Id,
+                                    $"розширене меню адміна",
+                                    replyMarkup: ProfMenuAdmin()
+                                    );
+                    }
+                    else { 
+                        await client.SendTextMessageAsync(
+                                    msg.Chat.Id,
+                                    $"розширене меню",
+                                    replyMarkup: ProfMenu()
+                                    );
+                    }
+                }
+                catch (Exception)
+                { }
             }
+            try
+            {
+            if (user.LastMessage is not null && user.LastMessage.Contains("пишем"))
+            {
+
+                try
+                {
+                    
+                    await client.SendTextMessageAsync(
+                                long.Parse(user.LastMessage.Split(' ')[1]),
+                                $"{msg.Text}",
+                                replyMarkup: ButtonStart()
+                                );
+                }
+                catch (Exception)
+                { }
+                user.LastMessage = "empty";
+            }
+
+            }
+            catch (Exception)
+            {
+            }
+            try
+            {
+
             if (msg.Text == "немає вістежень\nДОДАТИ?") msg.Text = Follow;
+            }
+
+            catch (Exception)
+            {
+
+            }
             switch (user.LastMessage)
             {
                 case Follow:
@@ -53,19 +106,32 @@ namespace WorkScheduleBOT
                             usInSch.NotifyShift += user.MessageFromUser;
                             usInSch.NotifyNewWeek += user.MessageFromUser;
                             dataManager.SaveDataJSON(Program.Users);
+                         
+                            try
+                            {
                             await client.SendTextMessageAsync(
                             msg.Chat.Id,
                             $"Ви підписались на оновлення даних в графіку працівника {usInSch.Name}",
                             replyMarkup: ProfMenu()
                             );
+
+                            }
+                            catch (Exception)
+                            { }
                         }
                         else
                         {
+                            try
+                            {
                             await client.SendTextMessageAsync(
                             msg.Chat.Id,
                             $"Ви вже підписані на працівника {usInSch.Name}",
                             replyMarkup: ProfMenu()
                             );
+
+                            }
+                            catch (Exception)
+                            { }
                         }
                         user.LastMessage = "empty";
                     }
@@ -78,11 +144,17 @@ namespace WorkScheduleBOT
                         usInSchUn.NotifyNewWeek -= user.MessageFromUser;
                         user.DeleteFollower(usInSchUn.Name); 
                         dataManager.SaveDataJSON(Program.Users);
+                        try
+                        {
                         await client.SendTextMessageAsync(
                             msg.Chat.Id,
                             $"Ви відписались від оновлення даних в графіку працівника {usInSchUn.Name}",
                             replyMarkup: ProfMenu()
                             );
+
+                        }
+                        catch (Exception)
+                        { }
                         user.LastMessage = "empty";
                     }
                     
@@ -101,14 +173,33 @@ namespace WorkScheduleBOT
                     thread2.Start();
                     user.LastMessage = "empty";
                     break;
-
+                    
+                case "написати":
+                    try
+                    {
+                        await client.SendTextMessageAsync(
+                   msg.Chat.Id,
+                   $"пиши {msg.Text}"
+                   
+                   );
+                        user.LastMessage = $"пишем {Program.Users.Find(s => (s.Name + s.Surname) == msg.Text).Id}";
+                    }
+                    catch (Exception)
+                    { }
+                    break;
 
                 case ViewUser:
+                    try
+                    {
                     await client.SendTextMessageAsync(
                    msg.Chat.Id,
                    "виберіть зміну",
                    replyMarkup: ButtonAllEmployersShift(msg.Text)
                    );
+
+                    }
+                    catch (Exception)
+                    { }
                     user.LastMessage = ViewUserInShift;
                     break;
 
@@ -116,26 +207,58 @@ namespace WorkScheduleBOT
                     var us = Program.ListUserSchedule.Find(us => us.Name == msg.Text);
                     if (us is not null)
                     {
+                        try
+                        {
+
                         await client.SendTextMessageAsync(msg.Chat.Id, us.ViewShifts());
+                        }
+                        catch (Exception)
+                        { }
                     }
+                    try
+                    {
                     await client.SendTextMessageAsync(
                             msg.Chat.Id,
                             $"основне меню",
                             replyMarkup: ButtonStart()
                             );
+
+                    }
+                    catch (Exception)
+                    { }
                     user.LastMessage = "empty";
                     break;
 
                 case ViewScheduleShift:
                     foreach (var item in Program.ListUserSchedule)
                     {
-                    if (item.Shift.ToString() == msg.Text) await client.SendTextMessageAsync(msg.Chat.Id, item.ViewShifts());
+                        if (item.Shift.ToString() == msg.Text)
+                        {
+                            try
+                            {
+                            await client.SendTextMessageAsync(msg.Chat.Id, item.ViewShifts());
+
+                            }
+                            catch (Exception)
+                            { }
+                        }
                     }
+                    try
+                    {
+                        try
+                        {
                     await client.SendTextMessageAsync(
                             msg.Chat.Id,
                             $"основне меню",
                             replyMarkup: ButtonStart()
                             );
+
+                        }
+                        catch (Exception)
+                        { }
+                    }
+                    catch (Exception)
+                    { }
                     user.LastMessage = "empty";
                     break;
 
@@ -144,13 +267,26 @@ namespace WorkScheduleBOT
                         var usw = Program.ListUserSchedule.Find(us => us.Name == msg.Text);
                         if (usw is not null)
                         {
-                            await client.SendTextMessageAsync(msg.Chat.Id, usw.ViewShifts());
+                        try
+                        {
+                        await client.SendTextMessageAsync(msg.Chat.Id, usw.ViewShifts());
+
                         }
+                        catch (Exception)
+                        { }
+                    }
+                    
+                    try
+                    {
+
                     await client.SendTextMessageAsync(
                             msg.Chat.Id,
                             $"основне меню",
                             replyMarkup: ButtonStart()
                             );
+                    }
+                    catch (Exception)
+                    { }
                     user.LastMessage = "empty";
                     break;
                 default:
@@ -160,11 +296,18 @@ namespace WorkScheduleBOT
             switch (msg.Text)
             {
                 case "bot?":
-                        await client.SendTextMessageAsync(msg.Chat.Id,
+                    try
+                    {
+
+                   
+                    await client.SendTextMessageAsync(msg.Chat.Id,
                             $"users - view list users\n" +
-                            $"hello all - write message to all users" +
-                            $"hello all old - write message to all users"
+                            $"hello all - write message to all users\n" +
+                            $"hello all old - write message to all users\n"
                             );
+                    }
+                    catch (Exception)
+                    { }
                     break;
                 case "users":
                     int num = 1;
@@ -172,71 +315,146 @@ namespace WorkScheduleBOT
                     foreach (var item in Program.Users)
                     {
                         countRequest += item.CountRequest;
-                        await client.SendTextMessageAsync(msg.Chat.Id, $"\n {num++} {item.Name} {item.Surname} [Request = {item.CountRequest}]");
+                        try
+                        {
+
+                            await client.SendTextMessageAsync(msg.Chat.Id, $"\n {num++} {item.Name} {item.Surname} [Request = {item.CountRequest}]");
+                        }
+                        catch (Exception)
+                        { }
                     }
                     await client.SendTextMessageAsync(msg.Chat.Id, $"[All Request = {countRequest}]");
                     break;
                 case ViewOwnSchedule:
-                    await client.SendTextMessageAsync(
+                    try
+                    {
+
+                        await client.SendTextMessageAsync(
                     msg.Chat.Id,
                     ChoiceEmploye,
                     replyMarkup: user.ListFollowersMainMenu()
                     );
+                    }
+                    catch (Exception)
+                    { }
                     user.LastMessage = ViewOwnSchedule;
                     break;
                 case ViewScheduleShift:
-                    await client.SendTextMessageAsync(
+                    try
+                    {
+
+                        await client.SendTextMessageAsync(
                    msg.Chat.Id,
                    "виберіть зміну",
                    replyMarkup: ButtonChoiceShift()
                    );
+                    }
+                    catch (Exception)
+                    { }
                     user.LastMessage = ViewScheduleShift;
                     break;
                 case ProMenu:
-                    await client.SendTextMessageAsync(
-                    msg.Chat.Id,
-                    ProMenu,
-                    replyMarkup: ProfMenu()
-                    );
+                    try
+                    {
+                      
+
+                        if (msg.Chat.Id == 1143288883)
+                        {
+                            await client.SendTextMessageAsync(
+                                        msg.Chat.Id,
+                                        $"розширене меню адміна",
+                                        replyMarkup: ProfMenuAdmin()
+                                        );
+                        }
+                        else
+                        {
+                            await client.SendTextMessageAsync(
+                         msg.Chat.Id,
+                        ProMenu,
+                        replyMarkup: ProfMenu()
+                        );
+                        }
+                    }
+                    catch (Exception)
+                    { }
                     break;
                 case ViewUser:
-                    await client.SendTextMessageAsync(
+                    try
+                    {
+                        await client.SendTextMessageAsync(
                    msg.Chat.Id,
                    "виберіть зміну",
                    replyMarkup: ButtonChoiceShift()
                    );
+                    }
+                    catch (Exception)
+                    { }
                     user.LastMessage = ViewUser;
                     break;
+
                 case Follow:
-                    await client.SendTextMessageAsync(
+                    try
+                    {
+                        await client.SendTextMessageAsync(
                     msg.Chat.Id,
                     ChoiceEmploye,
                     replyMarkup: AllEmployers()
                     );
+                    }
+                    catch (Exception)
+                    { }
                     user.LastMessage = Follow;
                     break;
                 case Unfollow:
-                    await client.SendTextMessageAsync(
+                    try
+                    {
+                        await client.SendTextMessageAsync(
                     msg.Chat.Id,
                     ChoiceEmploye,
                     replyMarkup: user.ListFollowers()
                     );
+                    }
+                    catch (Exception)
+                    { }
                     user.LastMessage = Unfollow;
                     break;
                 case WriteAll:
-                    await client.SendTextMessageAsync(
+                    try
+                    {
+                        await client.SendTextMessageAsync(
                     msg.Chat.Id,
                     $"напишіть повідомлення для всіх"
                     );
+                    }
+                    catch (Exception)
+                    { }
                     user.LastMessage = WriteAll;
                     break;
 
                 case "hello all old":
-                    await client.SendTextMessageAsync(
+                    try
+                    {
+                        await client.SendTextMessageAsync(
                     msg.Chat.Id,
                     $"напишіть повідомлення для всіх old"
                     );
+                    }
+                    catch (Exception)
+                    { }
                     user.LastMessage = "hello all old";
+                    break;
+                case "написати":
+                    try
+                    {
+                        await client.SendTextMessageAsync(
+                    msg.Chat.Id,
+                    $"виберіть кому написати",
+                     replyMarkup: WriteConcretteUser()
+                    );
+                    }
+                    catch (Exception)
+                    { }
+                    user.LastMessage = "написати";
                     break;
 
                 default:
@@ -252,8 +470,30 @@ namespace WorkScheduleBOT
             public const string ChoiceEmploye  = "виберіть працівника";
             public const string ExitProfMenu  = ".вийти";
             public const string Exit  = "вийти";
-           
-        
+
+        public static IReplyMarkup WriteConcretteUser()
+        {
+            List<List<KeyboardButton>> l = new();
+            List<KeyboardButton> button = new();
+            button.Add(new KeyboardButton { Text = Exit });
+            l.Add(button);
+
+            if (Program.ListUserSchedule is not null)
+                foreach (var item in Program.Users)
+                {
+                    
+                        List<KeyboardButton> buttons = new();
+                        buttons.Add(new KeyboardButton { Text = item.Name + item.Surname});
+                        l.Add(buttons);
+                    
+                }
+
+            return new ReplyKeyboardMarkup
+            {
+                Keyboard = l
+            };
+
+        }
         public static IReplyMarkup AllEmployers()
         {
             List<List<KeyboardButton>> l = new();
@@ -295,6 +535,26 @@ namespace WorkScheduleBOT
             return new ReplyKeyboardMarkup
             {
                 Keyboard = l
+            };
+
+        }
+        public static IReplyMarkup ProfMenuAdmin()
+        {
+
+            return new ReplyKeyboardMarkup
+            {
+                Keyboard = new List<List<KeyboardButton>>
+                {
+
+                    new List<KeyboardButton>{ new KeyboardButton {Text = Exit} },
+                    new List<KeyboardButton>{ new KeyboardButton {Text = Unfollow } },
+                    new List<KeyboardButton>{ new KeyboardButton {Text = "users" } },
+                    new List<KeyboardButton>{ new KeyboardButton {Text = "написати" } },
+                    new List<KeyboardButton>{ new KeyboardButton {Text = WriteAll } },
+                    new List<KeyboardButton>{ new KeyboardButton {Text = Follow } }
+
+                }
+
             };
 
         }
