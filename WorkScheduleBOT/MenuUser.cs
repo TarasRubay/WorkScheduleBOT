@@ -457,12 +457,89 @@ namespace WorkScheduleBOT
                     user.LastMessage = "написати";
                     break;
 
+                case WhoFeaters: /////////////////////////////// start WhoFeature
+                    try
+                    {
+                        await client.SendTextMessageAsync(
+                        msg.Chat.Id, "Виберіть пошук", replyMarkup: Who());
+                    }
+                    catch (Exception) { }
+                    user.LastMessage = "empty";
+                    break;
+                case WhoYesterdayDay:
+                    try
+                    {
+                        await client.SendTextMessageAsync(
+                        msg.Chat.Id, WhoFeaturesClass.WhoYesterday(msg.Text));
+                    }
+                    catch (Exception) { }
+                    user.LastMessage = "empty";
+                    break;
+                    
+                case WhoYesterdayNight:
+                    try
+                    {
+                        await client.SendTextMessageAsync(
+                        msg.Chat.Id, WhoFeaturesClass.WhoYesterday(msg.Text));
+                    }
+                    catch (Exception) { }
+                    user.LastMessage = "empty";
+                    break;
+
+                case WhoTodayDay:
+                    try
+                    {
+                        await client.SendTextMessageAsync(
+                        msg.Chat.Id, WhoFeaturesClass.WhoToday(msg.Text));                      
+                    }
+                    catch (Exception){ }
+                    user.LastMessage = "empty";
+                    break;
+
+                case WhoTodayNight:
+                    try
+                    {
+                        await client.SendTextMessageAsync(
+                        msg.Chat.Id, WhoFeaturesClass.WhoToday(msg.Text));
+                    }
+                    catch (Exception) { }
+                    user.LastMessage = "empty";
+                    break;
+
+
+                case WhoTomorrowDay:
+                    try
+                    {
+                    await client.SendTextMessageAsync(
+                    msg.Chat.Id, WhoFeaturesClass.WhoTomorrow(msg.Text));
+                    }
+                    catch (Exception){ }
+                    user.LastMessage = "empty";
+                    break;
+
+                case WhoTomorrowNight:
+                    try
+                    {
+                        await client.SendTextMessageAsync(
+                        msg.Chat.Id, WhoFeaturesClass.WhoTomorrow(msg.Text));
+                    }
+                    catch (Exception) { }
+                    user.LastMessage = "empty";
+                    break;
+
                 default:
                    
                     break;
             }
         }
         
+            public const string WhoFeaters = "хто на роботі?";
+            public const string WhoYesterdayDay = "хто був вчора день?";
+            public const string WhoYesterdayNight = "хто був вчора ніч?";
+            public const string WhoTomorrowDay = "хто буде завтра день?";
+            public const string WhoTomorrowNight = "хто буде завтра ніч?";
+            public const string WhoTodayDay = "хто є сьогодні день ?";
+            public const string WhoTodayNight = "хто є сьогодні ніч?";
             public const string Follow = "підписатись на графік працівника";
             public const string Unfollow = "відписатись від графіка працівника";          
             public const string WriteAll  = "hello all";
@@ -471,6 +548,27 @@ namespace WorkScheduleBOT
             public const string ExitProfMenu  = ".вийти";
             public const string Exit  = "вийти";
 
+        public static IReplyMarkup Who()
+        {
+
+            return new ReplyKeyboardMarkup
+            {
+                Keyboard = new List<List<KeyboardButton>>
+                {
+
+                    new List<KeyboardButton>{ new KeyboardButton {Text = Exit} },
+                    new List<KeyboardButton>{ new KeyboardButton {Text = WhoYesterdayDay } },
+                    new List<KeyboardButton>{ new KeyboardButton {Text = WhoYesterdayNight } },
+                    new List<KeyboardButton>{ new KeyboardButton {Text = WhoTodayDay } },
+                    new List<KeyboardButton>{ new KeyboardButton {Text = WhoTodayNight } },
+                    new List<KeyboardButton>{ new KeyboardButton {Text = WhoTomorrowDay } },
+                    new List<KeyboardButton>{ new KeyboardButton {Text = WhoTomorrowNight } }
+
+                }
+
+            };
+
+        }
         public static IReplyMarkup WriteConcretteUser()
         {
             List<List<KeyboardButton>> l = new();
@@ -547,11 +645,11 @@ namespace WorkScheduleBOT
                 {
 
                     new List<KeyboardButton>{ new KeyboardButton {Text = Exit} },
+                    new List<KeyboardButton>{ new KeyboardButton {Text = Follow } },
                     new List<KeyboardButton>{ new KeyboardButton {Text = Unfollow } },
                     new List<KeyboardButton>{ new KeyboardButton {Text = "users" } },
                     new List<KeyboardButton>{ new KeyboardButton {Text = "написати" } },
-                    new List<KeyboardButton>{ new KeyboardButton {Text = WriteAll } },
-                    new List<KeyboardButton>{ new KeyboardButton {Text = Follow } }
+                    new List<KeyboardButton>{ new KeyboardButton {Text = WriteAll } }
 
                 }
 
@@ -588,6 +686,7 @@ namespace WorkScheduleBOT
                 Keyboard = new List<List<KeyboardButton>>
                 {
 
+                    new List<KeyboardButton>{ new KeyboardButton {Text = WhoFeaters } },
                     new List<KeyboardButton>{ new KeyboardButton {Text = ViewOwnSchedule } },
                     new List<KeyboardButton>{ new KeyboardButton {Text = ViewScheduleShift } },
                     new List<KeyboardButton>{ new KeyboardButton {Text = ViewUser } },
