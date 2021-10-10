@@ -30,8 +30,8 @@ namespace WorkScheduleBOT
         public static List<List<object>> ExcelArrayObject;
         public static List<UserInSchedule> ListUserSchedule = new();
         public static List<string> ListWeeks { get; set; } = new();
-        //private static string token { get; set; } = "1973483435:AAEhUsog6N9nGLQ0SJ_GxJb4nXd2Mo40Blk";//Work Shedule spp
-        private static string token { get; set; } = "1912296215:AAHmxbSt7HtFRMTxiwLJ4okS6ummvUfu0Pg";//feature spp
+        private static string token { get; set; } = "1973483435:AAEhUsog6N9nGLQ0SJ_GxJb4nXd2Mo40Blk";//Work Shedule spp
+        //private static string token { get; set; } = "1912296215:AAHmxbSt7HtFRMTxiwLJ4okS6ummvUfu0Pg";//feature spp
 
         private static TelegramBotClient client;
         //public static Menu menu { get; set; }
@@ -41,8 +41,8 @@ namespace WorkScheduleBOT
         public static string pathJSON = @"..\..\..\..\UsersList.json";
         public static string UsInShPathJSON = @"..\..\..\..\UsersShedule.json";
         public static string ListWeekPathJSON = @"..\..\..\..\ListWeek.json";
-       // public static string pathXLS = @"D:\Documents\bot\WorkScheduleBOT\WorkScheduleBOT\bin\Debug\net5.0\2 ГРАФІК ОПЕРАТОРИ.xlsx";
-        public static string pathXLS = @"..\..\..\..\2 ГРАФІК ОПЕРАТОРИ.xlsx";
+        public static string pathXLS = @"D:\Documents\bot\WorkScheduleBOT\WorkScheduleBOT\bin\Debug\net5.0\2 ГРАФІК ОПЕРАТОРИ.xlsx";
+        //public static string pathXLS = @"..\..\..\..\2 ГРАФІК ОПЕРАТОРИ.xlsx";
         public static bool UpdateIsComplited = false;
         static void Main(string[] args)
         {
@@ -94,8 +94,8 @@ namespace WorkScheduleBOT
             aTimer.Elapsed += OnTimedEvent2;
             aTimer.AutoReset = true;
             aTimer.Enabled = true;
-                //ShowWindow(handle, SW_HIDE);
-                ShowWindow(handle, SW_SHOW);
+                ShowWindow(handle, SW_HIDE);
+                //ShowWindow(handle, SW_SHOW);
                 Console.Read();
                 client.StopReceiving();
             }
