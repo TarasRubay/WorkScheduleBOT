@@ -6,13 +6,15 @@ using Telegram.Bot.Types.ReplyMarkups;
 using System.Runtime.InteropServices;
 using System.Timers;
 using System.IO;
+using System.Threading;
 
 namespace WorkScheduleBOT
 {
     [Serializable]
     class Program
     {
-        private static Timer aTimer;
+        public enum MountsUA { січень, лютий, березень, квітень, травень, червень, липень, серпень, вересень, жовтень, листопад, грудень };
+        private static System.Timers.Timer aTimer;
         public static DateTime LastUpdateExcel;
         [DllImport("kernel32.dll")]
         static extern IntPtr GetConsoleWindow();
@@ -24,18 +26,10 @@ namespace WorkScheduleBOT
         const int SW_SHOW = 5;
         public static double StillProcent { get; set; }
         public static List<User> Users { get; set; }
+        public static List<User> UsersOld { get; set; }
         public static List<List<object>> ExcelArrayObject;
-        public static string LastUpDateWorkShedulePenunlimate;
-        public static string LastUpDateWorkSheduleLast;
-        public static List<string> WorkScheduleShift1;
-        public static List<string> WorkScheduleShift2;
-        public static List<string> WorkScheduleShift3;
-        public static List<string> WorkScheduleShift4;
-        public static List<string> WorkScheduleShift1_Last;
-        public static List<string> WorkScheduleShift2_Last;
-        public static List<string> WorkScheduleShift3_Last;
-        public static List<string> WorkScheduleShift4_Last;
-        public static List<UserInSchedule> userInSchedules;
+        public static List<UserInSchedule> ListUserSchedule = new();
+        public static List<string> ListWeeks { get; set; } = new();
         //private static string token { get; set; } = "1973483435:AAEhUsog6N9nGLQ0SJ_GxJb4nXd2Mo40Blk";//Work Shedule spp
         private static string token { get; set; } = "1912296215:AAHmxbSt7HtFRMTxiwLJ4okS6ummvUfu0Pg";//feature spp
 
@@ -44,24 +38,62 @@ namespace WorkScheduleBOT
 
         public static DataManager dataManager;
         public static string path = @"tel.bin";
-        public static string pathXLS = @"2 ГРАФІК ОПЕРАТОРИ.xlsx";
+        public static string pathJSON = @"..\..\..\..\UsersList.json";
+        public static string UsInShPathJSON = @"..\..\..\..\UsersShedule.json";
+        public static string ListWeekPathJSON = @"..\..\..\..\ListWeek.json";
+       // public static string pathXLS = @"D:\Documents\bot\WorkScheduleBOT\WorkScheduleBOT\bin\Debug\net5.0\2 ГРАФІК ОПЕРАТОРИ.xlsx";
+        public static string pathXLS = @"..\..\..\..\2 ГРАФІК ОПЕРАТОРИ.xlsx";
+        public static bool UpdateIsComplited = false;
         static void Main(string[] args)
         {
+
             var handle = GetConsoleWindow();
-            dataManager = new(path, "empty");
+            dataManager = new(path, "empty",pathJSON);
             Users = new();
-            Users = dataManager.LoadData();
+            UsersOld = new();
+            UsersOld = dataManager.LoadData();
+            ListUserSchedule = DataManagerJSON.LOadData(UsInShPathJSON);
+            ListWeeks = DataManagerJSON.LOadDataWeek(ListWeekPathJSON);
+            if (ListUserSchedule.Count == 0 || ListWeeks.Count == 0)
+                StartBot();
+            else
+                StartReading();
+            Users = dataManager.LoadDataJSON();
+            
+            
+            foreach (var item in Users)
+            {
+                item.LastMessage = "empty";
+                var list = item.ListFollowersForJson.Split('#');
+                foreach (var it in list)
+                {
+                    if(it is not "")item.AddFollower(it);
+                }
+                item.Notify += DisplayMessageTelegram;
+                foreach (var follower in item.GetListFollower())
+                {
+                    var usInSch = Program.ListUserSchedule.Find(us => us.Name == follower); 
+                    if (usInSch is not null)
+                    {
+                        usInSch.NotifyShift += item.MessageFromUser;
+                        usInSch.NotifyNewWeek += item.MessageFromUser;
+                    }
+
+                }
+             
+            }
             aTimer = new System.Timers.Timer();
-            aTimer.Interval = 2000;
-            aTimer.Elapsed += OnTimedEvent;
-            aTimer.AutoReset = true;
-            aTimer.Enabled = true;
             try
             {
                 client = new TelegramBotClient(token);
                 client.StartReceiving();
                 client.OnMessage += OnMessageHandler;
                 Console.WriteLine("bot started");
+            aTimer.Interval = 2000;
+            //aTimer.Elapsed += OnTimedEvent;
+            aTimer.Elapsed += OnTimedEvent2;
+            aTimer.AutoReset = true;
+            aTimer.Enabled = true;
                 //ShowWindow(handle, SW_HIDE);
                 ShowWindow(handle, SW_SHOW);
                 Console.Read();
@@ -71,273 +103,164 @@ namespace WorkScheduleBOT
             {}
             dataManager.SaveData(Users);
         }
-        private static async void OnTimedEvent(Object source, System.Timers.ElapsedEventArgs e)
+        public static void StartReading()
+        {
+            Console.WriteLine("Thread.Sleep(10000);");
+            Thread.Sleep(10000);
+            try
+            {
+                using (StreamReader sr = new StreamReader(pathXLS))
+                {
+                    Console.WriteLine("The file be read for update:");
+                    LastUpdateExcel = new FileInfo(pathXLS).LastWriteTime;
+                }
+                ExcelReader xslReader = new(pathXLS);
+                string TableReadet = "";
+                string nameRead = "last";
+                ExcelArrayObject = new(xslReader.readX(ref TableReadet, ref nameRead));
+                var arrNameRead = nameRead.Split(" ");
+                if (arrNameRead[2] == ListWeeks[^1])
+                {
+                    Menu.CheckUpdateInScedule(client, ExcelArrayObject, nameRead);
+
+                    Console.WriteLine("update last");
+                    //second read table
+                    TableReadet = "";
+                    nameRead = "penunlimate";
+                    ExcelArrayObject = new(xslReader.readX(ref TableReadet, ref nameRead));
+                    List<string> listHospital = Menu.CheckUpdateInScedule(client, ExcelArrayObject, nameRead);
+                    //foreach (var item in listHospital)
+                    //{
+                    //    var us = ListUserSchedule.Find(u => u.Name == item);
+                    //    if (us is not null) us.MailingHospital();
+                    //    Console.WriteLine("send hosp not.");
+                    //}
+                    Console.WriteLine("update penunlimited");
+                }
+                else
+                {
+                    List<string> listHospital = Menu.CreatingUsersInScheduleSecondStartNew(client, ExcelArrayObject, nameRead);
+                    foreach (var item in ListUserSchedule)
+                    {
+                        item.MailingByAddNewWeek();
+                    }
+                    Console.WriteLine("Add new week");
+                    //foreach (var item in listHospital)
+                    //{
+                    //    var us = ListUserSchedule.Find(u => u.Name == item);
+                    //    if (us is not null) us.MailingHospital();
+                    //    Console.WriteLine("send hosp not.");
+                    //}
+                }
+                DataManagerJSON.SaveDataWeek(ListWeekPathJSON,ListWeeks);
+                DataManagerJSON.SaveData(UsInShPathJSON,ListUserSchedule);
+            }
+            catch (Exception Ex)
+            {
+                // Let the user know what went wrong.
+                Console.WriteLine(Ex.Message);
+                //await client.SendTextMessageAsync(Program.Users[0].Id, "The file could not be read:" + Ex.Message);
+            }
+            
+        }
+        public static void StartBot()
+        {
+                try
+                {
+                    using (StreamReader sr = new StreamReader(pathXLS))
+                    {
+                        Console.WriteLine("The file be read first time:");
+                        LastUpdateExcel = new FileInfo(pathXLS).LastWriteTime;
+                    }
+                    ExcelReader xslReader = new(pathXLS);
+                    string TableReadet = "";
+                    string nameRead = "penunlimate";
+                    ExcelArrayObject = new(xslReader.readX(ref TableReadet, ref nameRead));
+                    Menu.CreatingUsersInScheduleFirstStartNew(client, ExcelArrayObject, nameRead);
+
+                    Console.WriteLine("File update penunlimited StartBot(); ");
+                   
+                    //second read table
+                    TableReadet = "";
+                    nameRead = "last";
+                    ExcelArrayObject = new(xslReader.readX(ref TableReadet, ref nameRead));
+                    Menu.CreatingUsersInScheduleSecondStartNew(client, ExcelArrayObject, nameRead);
+                    Console.WriteLine("File update table last StartBot(); ");
+                    DataManagerJSON.SaveData(UsInShPathJSON,ListUserSchedule);
+                    DataManagerJSON.SaveDataWeek(ListWeekPathJSON,ListWeeks);
+
+            }
+            catch (Exception Ex)
+                {
+
+                Console.WriteLine(Ex.Message);
+                }
+            
+        }
+        private static async void OnTimedEvent2(Object source, System.Timers.ElapsedEventArgs e)
         {
             Console.WriteLine($"{LastUpdateExcel} {e.SignalTime}");
             if (LastUpdateExcel < new FileInfo(pathXLS).LastWriteTime)
             {
-                if (LastUpdateExcel > new DateTime(2020, 12, 1))
-                {
-                    foreach (var item in Users)
-                    {
-                        await client.SendTextMessageAsync(item.Id, $"Schedule Up to date\n{new FileInfo(pathXLS).LastWriteTime}");
-                    }
 
-                }
                 try
                 {
-                    // Create an instance of StreamReader to read from a file.
-                    // The using statement also closes the StreamReader.
                     using (StreamReader sr = new StreamReader(pathXLS))
                     {
                         Console.WriteLine("The file be read:");
                         LastUpdateExcel = new FileInfo(pathXLS).LastWriteTime;
                     }
-                    try
-                    {
-                        
-                        ExcelReader xslReader = new(pathXLS);
-                        string TableReadet = "";
-                        ExcelArrayObject = new(xslReader.readX(ref TableReadet, "last"));
-                        //TableReadet.TrimStart(,)
-                        LastUpDateWorkSheduleLast = TableReadet;
-                        WorkScheduleShift1_Last = new();
-                        WorkScheduleShift2_Last = new();
-                        WorkScheduleShift3_Last = new();
-                        WorkScheduleShift4_Last = new();
+                    Thread thread = new Thread(new ThreadStart(StartReading));
+                    thread.Start();
                        
-
-                        int countShift = 0;
-                        for (int i = 3; i < ExcelArrayObject.Count; i++)
-                        {
-                            if (ExcelArrayObject[i][1] is not null)
-                            {
-                                if (ExcelArrayObject[i][0].ToString() == "1")
-                                    countShift++;
-
-                                string tmp = ExcelArrayObject[i][1].ToString() + ": ";
-                                for (int j = 2; j < 16; j++)
-                                {
-                                    if (ExcelArrayObject[i][j] is not null)
-                                    {
-                                        if (ExcelArrayObject[i][j].ToString() == "12")
-                                        {
-                                            if (ExcelArrayObject[0][j].ToString() == "ніч")
-                                                tmp += ExcelArrayObject[0][j - 1].ToString() + " " + ExcelArrayObject[0][j].ToString() + " " + ExcelArrayObject[1][j - 1].ToString() + ", ";
-                                            else
-                                                tmp += ExcelArrayObject[0][j].ToString() + " день " + ExcelArrayObject[1][j].ToString() + ", ";
-                                        }
-                                        else if (ExcelArrayObject[i][j].ToString() == "в")
-                                        {
-                                            tmp += ExcelArrayObject[i][j].ToString();
-                                        }
-                                        else if (ExcelArrayObject[i][j].ToString() == "В")
-                                        {
-                                            tmp += ExcelArrayObject[i][j].ToString();
-                                        }
-                                        else if (ExcelArrayObject[i][j].ToString() == "Л")
-                                        {
-                                            tmp += ExcelArrayObject[i][j].ToString();
-                                        }
-                                        else if (ExcelArrayObject[i][j].ToString() == "л")
-                                        {
-                                            tmp += ExcelArrayObject[i][j].ToString();
-                                        }
-                                    }
-
-                                }
-
-                                if (countShift == 1)
-                                    WorkScheduleShift1_Last.Add(tmp);
-                                else if (countShift == 2)
-                                    WorkScheduleShift2_Last.Add(tmp);
-                                else if (countShift == 3)
-                                    WorkScheduleShift3_Last.Add(tmp);
-                                else if (countShift == 4)
-                                    WorkScheduleShift4_Last.Add(tmp);
-                            }
-                        }
-                        Console.WriteLine("File update table last");
-
-                    }
-                    catch (Exception)
-                    {
-
-
-                    }
-                    try
-                    {
-
-                        ExcelReader xslReader = new(pathXLS);
-                        string TableReadet = "";
-                        ExcelArrayObject = new(xslReader.readX(ref TableReadet, "penunlimate"));
-
-                        LastUpDateWorkShedulePenunlimate = TableReadet;
-
-                        WorkScheduleShift1 = new();
-                        WorkScheduleShift2 = new();
-                        WorkScheduleShift3 = new();
-                        WorkScheduleShift4 = new();
-                        
-
-                        int countShift = 0;
-                        for (int i = 3; i < ExcelArrayObject.Count; i++)
-                        {
-                            if (ExcelArrayObject[i][1] is not null)
-                            {
-                                if (ExcelArrayObject[i][0].ToString() == "1")
-                                    countShift++;
-
-                                string tmp = ExcelArrayObject[i][1].ToString() + ": ";
-                                for (int j = 2; j < 16; j++)
-                                {
-                                    if (ExcelArrayObject[i][j] is not null)
-                                    {
-                                        if (ExcelArrayObject[i][j].ToString() == "12")
-                                        {
-                                            if (ExcelArrayObject[0][j].ToString() == "ніч")
-                                                tmp += ExcelArrayObject[0][j - 1].ToString() + " " + ExcelArrayObject[0][j].ToString() + " " + ExcelArrayObject[1][j - 1].ToString() + ", ";
-                                            else
-                                                tmp += ExcelArrayObject[0][j].ToString() + " день " + ExcelArrayObject[1][j].ToString() + ", ";
-                                        }
-                                        else if (ExcelArrayObject[i][j].ToString() == "в")
-                                        {
-                                            tmp += ExcelArrayObject[i][j].ToString();
-                                        }
-                                        else if (ExcelArrayObject[i][j].ToString() == "В")
-                                        {
-                                            tmp += ExcelArrayObject[i][j].ToString();
-                                        }
-                                        else if (ExcelArrayObject[i][j].ToString() == "Л")
-                                        {
-                                            tmp += ExcelArrayObject[i][j].ToString();
-                                        }
-                                        else if (ExcelArrayObject[i][j].ToString() == "л")
-                                        {
-                                            tmp += ExcelArrayObject[i][j].ToString();
-                                        }
-                                    }
-
-                                }
-
-                                if (countShift == 1)
-                                    WorkScheduleShift1.Add(tmp);
-                                else if (countShift == 2)
-                                    WorkScheduleShift2.Add(tmp);
-                                else if (countShift == 3)
-                                    WorkScheduleShift3.Add(tmp);
-                                else if (countShift == 4)
-                                    WorkScheduleShift4.Add(tmp);
-                            }
-                        }
-                        Console.WriteLine("File update penunlimited");
-
-                    }
-                    catch (Exception)
-                    {
-
-
-                    }
                 }
-                catch (Exception ex)
+                catch (Exception Ex)
                 {
-                    // Let the user know what went wrong.
-                    Console.WriteLine("The file could not be read:");
-                    //Console.WriteLine(ex.Message);
+                   
+                    Console.WriteLine(Ex.Message);
+                   
                 }
-
-
 
             }
         }
+       
         private static async void OnMessageHandler(object sender, MessageEventArgs e)
         {
-            string penunlim = LastUpDateWorkShedulePenunlimate;
-            string las = LastUpDateWorkSheduleLast;
+          
             var msg = e.Message;
             User us = Users.Find(u => u.Id == msg.From.Id);
             if (msg.Text == null) msg.Text = "";
+         
             try
             {
                 if (us is not null)
                 {
-                    us.CountRequest++;
-                    await client.SendTextMessageAsync(
-                            msg.Chat.Id,
-                            LastUpdateExcel.ToString(),
-                            replyMarkup: WeeksButtons()
-                            );
-                  
-                    if(msg.Text == LastUpDateWorkShedulePenunlimate)
-                        await client.SendTextMessageAsync(
-                            msg.Chat.Id,
-                            $"виберіть зміну",
-                            replyMarkup: ButtonPenunlimited()
-                            );
-                    else if (msg.Text == LastUpDateWorkSheduleLast)
-                        await client.SendTextMessageAsync(
-                            msg.Chat.Id,
-                            $"виберіть зміну",
-                            replyMarkup: ButtonLast()
-                            );
 
-                    switch (msg.Text)
-                    {
-                        
-                        case "зміна 1":
-                        Menu.ViewShift(client, e, LastUpDateWorkSheduleLast, WorkScheduleShift1_Last);
-                            break;
-                        case "зміна 2":
-                        Menu.ViewShift(client, e, LastUpDateWorkSheduleLast, WorkScheduleShift2_Last);
-                            break;
-                        case "зміна 3":
-                        Menu.ViewShift(client, e, LastUpDateWorkSheduleLast, WorkScheduleShift3_Last);
-                            break;
-                        case "зміна 4":
-                        Menu.ViewShift(client, e, LastUpDateWorkSheduleLast, WorkScheduleShift4_Last);
-                            break;
-                        case "зміна 1!":
-                            Menu.ViewShift(client, e, LastUpDateWorkShedulePenunlimate, WorkScheduleShift1);
-                            break;
-                        case "зміна 2!":
-                            Menu.ViewShift(client, e, LastUpDateWorkShedulePenunlimate, WorkScheduleShift2);
-                            break;
-                        case "зміна 3!":
-                            Menu.ViewShift(client, e, LastUpDateWorkShedulePenunlimate, WorkScheduleShift3);
-                            break;
-                        case "зміна 4!":
-                            Menu.ViewShift(client, e, LastUpDateWorkShedulePenunlimate, WorkScheduleShift4);
-                            break;
-                        case "users":
-                        int num = 1;
-                        foreach (var item in Program.Users)
-                        {
-                            await client.SendTextMessageAsync(msg.Chat.Id, $"\n {num++} {item.Name} {item.Surname} [Request = {item.CountRequest}]");
-                        }
-                            break;
-                        default:
-                            break;
-                    }
+                    MenuUser.IncomenMessage(client,us,e);
+                    
                 }
                 else
                 {
                      
-                    if (msg.Text == "4653") {
+                    if (msg.Text == "0000") {
                         await client.SendTextMessageAsync(
                             msg.Chat.Id,
                             $"Новий користувач {msg.Chat.FirstName} {msg.Chat.LastName}\naccepted",
-                            replyMarkup: WeeksButtons()
+                            replyMarkup: MenuUser.ButtonStart()
                             );
                         if (!Users.Exists(it => it.Id == msg.From.Id))
                         {
-                            Users.Add(new User
+                            User user = new User
                             {
                                 Id = e.Message.From.Id,
                                 Name = e.Message.From.FirstName,
                                 Surname = e.Message.From.LastName,
                                 CountRequest = 0
-                            });
-                            dataManager.SaveData(Users);
+                            };
+                            Users.Add(user);
+                            Users[^1].Notify += DisplayMessageTelegram;
+                            //dataManager.SaveData(Users);
+                            dataManager.SaveDataJSON(Users);
                         }
                     }
                     else
@@ -349,59 +272,37 @@ namespace WorkScheduleBOT
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception Ex)
             {
-                await client.SendTextMessageAsync(msg.Chat.Id, "Exception");
+                await client.SendTextMessageAsync(msg.Chat.Id, Ex.Message);
             }
         }
-
-      
-        public static IReplyMarkup WeeksButtons()
-        {
-            return new ReplyKeyboardMarkup
+            private static void DisplayMessageTelegram(object sender, string e)
             {
-                Keyboard = new List<List<KeyboardButton>>
+                User user = sender as User;
+                if (user is not null)
                 {
-                    new List<KeyboardButton>{ new KeyboardButton {Text = LastUpDateWorkShedulePenunlimate } },
-                    new List<KeyboardButton>{ new KeyboardButton {Text = LastUpDateWorkSheduleLast } }
+                client.SendTextMessageAsync(user.Id,e);
                 }
-
-            };
-        }
-        public static IReplyMarkup ButtonPenunlimited()
+            }
+        public static string WriteMessage;
+        public static void WriteAllUsers()
         {
-            return new ReplyKeyboardMarkup
+            foreach (var item in Program.Users)
             {
-                Keyboard = new List<List<KeyboardButton>>
-                {
-
-                    new List<KeyboardButton>{ new KeyboardButton {Text = "зміна 1!" } },
-                    new List<KeyboardButton>{ new KeyboardButton {Text = "зміна 2!" } },
-                    new List<KeyboardButton>{ new KeyboardButton {Text = "зміна 3!" } },
-                    new List<KeyboardButton>{ new KeyboardButton {Text = "зміна 4!" } },
-                    new List<KeyboardButton>{ new KeyboardButton {Text = "exit" } }
-
-                }
-
-            };
+                client.SendTextMessageAsync(item.Id, WriteMessage);
+                Thread.Sleep(1000);
+            }
         }
-        public static IReplyMarkup ButtonLast()
+        public static string WriteMessage2;
+        public static void WriteAllUsers2()
         {
-            return new ReplyKeyboardMarkup
+            foreach (var item in UsersOld)
             {
-                Keyboard = new List<List<KeyboardButton>>
-                {
+                client.SendTextMessageAsync(item.Id, WriteMessage2);
+                Thread.Sleep(1000);
 
-                    new List<KeyboardButton>{ new KeyboardButton {Text = "зміна 1" } },
-                    new List<KeyboardButton>{ new KeyboardButton {Text = "зміна 2" } },
-                    new List<KeyboardButton>{ new KeyboardButton {Text = "зміна 3" } },
-                    new List<KeyboardButton>{ new KeyboardButton {Text = "зміна 4" } },
-                    new List<KeyboardButton>{ new KeyboardButton {Text = "exit" } }
-
-                }
-
-            };
+            }
         }
-
     }
 }
