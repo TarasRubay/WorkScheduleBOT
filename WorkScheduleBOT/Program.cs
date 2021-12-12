@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using System.Timers;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace WorkScheduleBOT
 {
@@ -31,7 +32,7 @@ namespace WorkScheduleBOT
         public static List<UserInSchedule> ListUserSchedule = new();
         public static List<string> ListWeeks { get; set; } = new();
         private static string token { get; set; } = "1973483435:AAEhUsog6N9nGLQ0SJ_GxJb4nXd2Mo40Blk";//Work Shedule spp
-        //private static string token { get; set; } = "1912296215:AAHmxbSt7HtFRMTxiwLJ4okS6ummvUfu0Pg";//feature spp
+
 
         private static TelegramBotClient client;
         //public static Menu menu { get; set; }
@@ -44,14 +45,16 @@ namespace WorkScheduleBOT
         public static string pathXLS = @"D:\Documents\bot\WorkScheduleBOT\WorkScheduleBOT\bin\Debug\net5.0\2 ГРАФІК ОПЕРАТОРИ.xlsx";
         //public static string pathXLS = @"..\..\..\..\2 ГРАФІК ОПЕРАТОРИ.xlsx";
         public static bool UpdateIsComplited = false;
+
+        [Obsolete]
         static void Main(string[] args)
         {
 
             var handle = GetConsoleWindow();
             dataManager = new(path, "empty",pathJSON);
             Users = new();
-            UsersOld = new();
-            UsersOld = dataManager.LoadData();
+            //UsersOld = new();
+           // UsersOld = dataManager.LoadData();
             ListUserSchedule = DataManagerJSON.LOadData(UsInShPathJSON);
             ListWeeks = DataManagerJSON.LOadDataWeek(ListWeekPathJSON);
             if (ListUserSchedule.Count == 0 || ListWeeks.Count == 0)
@@ -105,8 +108,8 @@ namespace WorkScheduleBOT
         }
         public static void StartReading()
         {
-            Console.WriteLine("Thread.Sleep(10000);");
-            Thread.Sleep(10000);
+           // Console.WriteLine("Thread.Sleep(10000);");
+           // Thread.Sleep(10000);
             try
             {
                 using (StreamReader sr = new StreamReader(pathXLS))
@@ -197,12 +200,12 @@ namespace WorkScheduleBOT
                 }
             
         }
-        private static async void OnTimedEvent2(Object source, System.Timers.ElapsedEventArgs e)
+        private static void OnTimedEvent2(Object source, System.Timers.ElapsedEventArgs e)
         {
+            CancellationTokenSource cancellation = new CancellationTokenSource();
             Console.WriteLine($"{LastUpdateExcel} {e.SignalTime}");
             if (LastUpdateExcel < new FileInfo(pathXLS).LastWriteTime)
             {
-
                 try
                 {
                     using (StreamReader sr = new StreamReader(pathXLS))
@@ -210,20 +213,29 @@ namespace WorkScheduleBOT
                         Console.WriteLine("The file be read:");
                         LastUpdateExcel = new FileInfo(pathXLS).LastWriteTime;
                     }
-                    Thread thread = new Thread(new ThreadStart(StartReading));
-                    thread.Start();
-                       
+
+                    //Thread thread = new Thread(new ThreadStart(StartReading));
+                    //thread.Start();
+                    var res = Task.Run(async delegate 
+                    {
+                        await Task.Delay(5000, cancellation.Token);
+                        StartReading();
+                        return "Reading is done";
+                    });
+                    res.Wait();
+                    Console.WriteLine(res.Status);
                 }
                 catch (Exception Ex)
                 {
-                   
+
                     Console.WriteLine(Ex.Message);
-                   
+
                 }
 
             }
         }
-       
+
+        [Obsolete]
         private static async void OnMessageHandler(object sender, MessageEventArgs e)
         {
           
@@ -277,32 +289,66 @@ namespace WorkScheduleBOT
                 await client.SendTextMessageAsync(msg.Chat.Id, Ex.Message);
             }
         }
-            private static void DisplayMessageTelegram(object sender, string e)
+            private static async void DisplayMessageTelegram(object sender, string e)
             {
                 User user = sender as User;
                 if (user is not null)
                 {
-                client.SendTextMessageAsync(user.Id,e);
+                try
+                {
+                    await client.SendTextMessageAsync(user.Id,e);
+
                 }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
             }
         public static string WriteMessage;
         public static void WriteAllUsers()
         {
-            foreach (var item in Program.Users)
-            {
-                client.SendTextMessageAsync(item.Id, WriteMessage);
-                Thread.Sleep(1000);
-            }
-        }
-        public static string WriteMessage2;
-        public static void WriteAllUsers2()
-        {
-            foreach (var item in UsersOld)
-            {
-                client.SendTextMessageAsync(item.Id, WriteMessage2);
-                Thread.Sleep(1000);
+            CancellationTokenSource cancellation = new CancellationTokenSource();
 
+            var t = Task.Run(async delegate
+            {
+                foreach (var item in Program.Users)
+                {
+                    await client.SendTextMessageAsync(item.Id, WriteMessage);
+                    await Task.Delay(1000, cancellation.Token);   
+                }
+                //return "end";
+            });
+            try
+            {
+                t.Wait();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
         }
+        //public static string WriteMessage2;
+        //public static void WriteAllUsers2()
+        //{
+        //    CancellationTokenSource cancellation = new CancellationTokenSource();
+        //    var t = Task.Run(async delegate
+        //    {
+        //        foreach (var item in UsersOld)
+        //        {
+        //            await client.SendTextMessageAsync(item.Id, WriteMessage2);
+        //            await Task.Delay(1000, cancellation.Token);
+        //        }
+        //        //return "end";
+        //    });
+        //    try
+        //    {
+        //        t.Wait();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine(ex.Message);
+        //    }
+        //}
     }
 }
