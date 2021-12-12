@@ -161,18 +161,19 @@ namespace WorkScheduleBOT
                     break;
                 case WriteAll:
                     Program.WriteMessage = msg.Text;
-                    Thread thread = new Thread(new ThreadStart(Program.WriteAllUsers));
-                    thread.Start();
+
+                    Program.WriteAllUsers();
+                    
 
                     user.LastMessage = "empty";
                     break;
                     
-                case "hello all old":
-                    Program.WriteMessage2 = msg.Text;
-                    Thread thread2 = new Thread(new ThreadStart(Program.WriteAllUsers2));
-                    thread2.Start();
-                    user.LastMessage = "empty";
-                    break;
+                //case "hello all old":
+                //    Program.WriteMessage2 = msg.Text;
+                //    Program.WriteAllUsers2();
+                    
+                //    user.LastMessage = "empty";
+                //    break;
                     
                 case "написати":
                     try
@@ -317,7 +318,6 @@ namespace WorkScheduleBOT
                         countRequest += item.CountRequest;
                         try
                         {
-
                             await client.SendTextMessageAsync(msg.Chat.Id, $"\n {num++} {item.Name} {item.Surname} [Request = {item.CountRequest}]");
                         }
                         catch (Exception)
@@ -528,7 +528,19 @@ namespace WorkScheduleBOT
                     break;
 
                 default:
-                   
+                    //try
+                    //{
+                    //    await client.SendTextMessageAsync(
+                    //        msg.Chat.Id,
+                    //        $"основне меню",
+                    //        replyMarkup: ButtonStart()
+                    //        );
+                    //}
+                    //catch (Exception ex)
+                    //{
+                    //    Console.WriteLine(ex.Message);
+                      
+                    //}
                     break;
             }
         }
