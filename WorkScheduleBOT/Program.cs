@@ -32,7 +32,7 @@ namespace WorkScheduleBOT
         public static List<UserInSchedule> ListUserSchedule = new();
         public static List<string> ListWeeks { get; set; } = new();
         private static string token { get; set; } = "1973483435:AAEhUsog6N9nGLQ0SJ_GxJb4nXd2Mo40Blk";//Work Shedule spp
-        //private static string token { get; set; } = "1912296215:AAHlgaOhoqY0zApv_XILroulH0Y8VWV1RFQ";//feature spp
+
 
         private static TelegramBotClient client;
         //public static Menu menu { get; set; }
@@ -97,8 +97,8 @@ namespace WorkScheduleBOT
             aTimer.Elapsed += OnTimedEvent2;
             aTimer.AutoReset = true;
             aTimer.Enabled = true;
-                //ShowWindow(handle, SW_HIDE);
-                ShowWindow(handle, SW_SHOW);
+                ShowWindow(handle, SW_HIDE);
+                //ShowWindow(handle, SW_SHOW);
                 Console.Read();
                 client.StopReceiving();
             }
