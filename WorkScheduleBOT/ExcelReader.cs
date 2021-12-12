@@ -29,8 +29,9 @@ namespace WorkScheduleBOT
                 System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
                 using (var stream = System.IO.File.Open(excelFile, FileMode.Open, FileAccess.Read))
                 {
-                    var passConfig = new ExcelReaderConfiguration { Password = "4921" };
-                    IExcelDataReader excelDataReader = ExcelDataReader.ExcelReaderFactory.CreateReader(stream,passConfig);
+                    //var passConfig = new ExcelReaderConfiguration { Password = "4921" };
+                    //IExcelDataReader excelDataReader = ExcelDataReader.ExcelReaderFactory.CreateReader(stream,passConfig);
+                    IExcelDataReader excelDataReader = ExcelDataReader.ExcelReaderFactory.CreateReader(stream);
                     var conf = new ExcelDataSetConfiguration()
                     {
                         ConfigureDataTable = a => new ExcelDataTableConfiguration
