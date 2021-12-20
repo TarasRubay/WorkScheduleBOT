@@ -35,12 +35,12 @@ namespace WorkScheduleBOT
         }
         public static bool operator ==(Shift a, Shift b)
         {
-            if (a.Date == b.Date && a.Week == b.Week && a.NameOfShift == b.NameOfShift) return true;
+            if (a.Date == b.Date && a.NameOfShift == b.NameOfShift) return true;
             else return false;
         }
         public static bool operator !=(Shift a, Shift b)
         {
-            if (a.Date == b.Date && a.Week == b.Week && a.NameOfShift == b.NameOfShift) return false;
+            if (a.Date == b.Date && a.NameOfShift == b.NameOfShift) return false;
             else return true;
         }
 
