@@ -31,7 +31,7 @@ namespace WorkScheduleBOT
         public static List<List<object>> ExcelArrayObject;
         public static List<UserInSchedule> ListUserSchedule = new();
         public static List<string> ListWeeks { get; set; } = new();
-        private static string token { get; set; } = "1973483435:AAEhUsog6N9nGLQ0SJ_GxJb4nXd2Mo40Blk";//Work Shedule spp
+        private static string token { get; set; } = "1973483435:AAHN3s6e5-AKpScLLap1kKB0u5Nk8zxEINI";//Work Shedule spp
 
 
         private static TelegramBotClient client;
