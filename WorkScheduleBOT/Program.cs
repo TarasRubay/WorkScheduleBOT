@@ -314,7 +314,8 @@ namespace WorkScheduleBOT
             {
                 foreach (var item in Program.Users)
                 {
-                    await client.SendTextMessageAsync(item.Id, WriteMessage);
+                    await client.SendTextMessageAsync(item.Id, WriteMessage,
+                            replyMarkup: MenuUser.ButtonStart());
                     await Task.Delay(1000, cancellation.Token);   
                 }
                 //return "end";

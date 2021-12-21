@@ -21,7 +21,8 @@ namespace WorkScheduleBOT
                 foreach (var shift in shifts)
                 {
                     List<KeyboardButton> buttons = new();
-                    buttons.Add(new KeyboardButton { Text = $"{shift.Date.ToShortDateString()} {shift.NameOfShift}"  });
+                    buttons.Add(new KeyboardButton { Text = $"{shift.Date.ToShortDateString()} {shift.NameOfShift.Split(" ")[0]}"  });
+                    if(!l.Any(p => p.FirstOrDefault().Text == buttons.FirstOrDefault().Text))
                     l.Add(buttons);
                 }
             return new ReplyKeyboardMarkup
@@ -41,6 +42,20 @@ namespace WorkScheduleBOT
                 }
             }
             return listUser;
+        }
+        public static IReplyMarkup GetMarkupNameDay()
+        {
+            return new ReplyKeyboardMarkup
+            {
+                Keyboard = new List<List<KeyboardButton>>
+                {
+
+                    new List<KeyboardButton>{ new KeyboardButton {Text = "день"} },
+                    new List<KeyboardButton>{ new KeyboardButton {Text = "ніч"} }
+                   
+                }
+
+            };
         }
         public static string WhoToday(string inMassage)
         {

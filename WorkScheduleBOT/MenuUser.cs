@@ -92,6 +92,19 @@ namespace WorkScheduleBOT
             {
 
             }
+            string dateView = "";
+            try
+            {
+                if (user.LastMessage.Contains("."))
+                {
+                    dateView = user.LastMessage.Split('#')[0] + " " + msg.Text;
+                    user.LastMessage = "redirectToView";
+                }
+            }
+            catch (Exception)
+            {
+
+            }
             switch (user.LastMessage)
             {
                 case Follow:
@@ -295,7 +308,23 @@ namespace WorkScheduleBOT
 
                     try
                     {
-                        await client.SendTextMessageAsync(msg.Chat.Id, WhoFeaturesClass.FindUserInDate(msg.Text));
+                       
+                        await client.SendTextMessageAsync(
+                                msg.Chat.Id,
+                                $"Виберіть тип",
+                                replyMarkup: WhoFeaturesClass.GetMarkupNameDay()
+                                );
+                    }
+                    catch (Exception)
+                    { }
+                    user.LastMessage = $"{msg.Text}#";
+                    break;
+                case "redirectToView":
+
+
+                    try
+                    {
+                        await client.SendTextMessageAsync(msg.Chat.Id, WhoFeaturesClass.FindUserInDate(dateView));
                         await client.SendTextMessageAsync(
                                 msg.Chat.Id,
                                 $"основне меню",
