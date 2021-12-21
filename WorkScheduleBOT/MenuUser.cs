@@ -303,8 +303,8 @@ namespace WorkScheduleBOT
                    
                     await client.SendTextMessageAsync(msg.Chat.Id,
                             $"users - view list users\n" +
-                            $"hello all - write message to all users\n" +
-                            $"hello all old - write message to all users\n"
+                            $"написати - написати користувачу\n" +
+                            $"hello all - write message to all users\n" 
                             );
                     }
                     catch (Exception)
@@ -545,7 +545,7 @@ namespace WorkScheduleBOT
             }
         }
         
-            public const string WhoFeaters = "хто на роботі?";
+            public const string WhoFeaters = "сортувати по даті";
             public const string WhoYesterdayDay = "хто був вчора день?";
             public const string WhoYesterdayNight = "хто був вчора ніч?";
             public const string WhoTomorrowDay = "хто буде завтра день?";
