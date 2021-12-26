@@ -95,7 +95,7 @@ namespace WorkScheduleBOT
             string dateView = "";
             try
             {
-                if (user.LastMessage.Contains("."))
+                if (user.LastMessage is not null && user.LastMessage.Contains("#"))
                 {
                     dateView = user.LastMessage.Split('#')[0] + " " + msg.Text;
                     user.LastMessage = "redirectToView";
