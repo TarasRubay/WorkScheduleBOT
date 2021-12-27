@@ -40,6 +40,7 @@ namespace WorkScheduleBOT
         public static DataManager dataManager;
         public static string path = @"tel.bin";
         public static string pathJSON = @"..\..\..\..\UsersList.json";
+        public static string pathBagJSON = @"..\..\..\..\BagReport.json";
         public static string UsInShPathJSON = @"..\..\..\..\UsersShedule.json";
         public static string ListWeekPathJSON = @"..\..\..\..\ListWeek.json";
         public static string pathXLS = @"D:\Documents\bot\WorkScheduleBOT\WorkScheduleBOT\bin\Debug\net5.0\2 ГРАФІК ОПЕРАТОРИ.xlsx";
@@ -49,7 +50,7 @@ namespace WorkScheduleBOT
         [Obsolete]
         static void Main(string[] args)
         {
-
+            BagReport.LoadBags(pathBagJSON);
             var handle = GetConsoleWindow();
             dataManager = new(path, "empty",pathJSON);
             Users = new();
@@ -102,8 +103,10 @@ namespace WorkScheduleBOT
                 Console.Read();
                 client.StopReceiving();
             }
-            catch (Exception)
-            {}
+            catch (Exception ex)
+            {
+                BagReport.SetBagAndSave(ex.Message, Program.pathBagJSON);
+            }
             dataManager.SaveData(Users);
         }
         public static void StartReading()
@@ -162,6 +165,7 @@ namespace WorkScheduleBOT
             {
                 // Let the user know what went wrong.
                 Console.WriteLine(Ex.Message);
+                BagReport.SetBagAndSave(Ex.Message, Program.pathBagJSON);
                 //await client.SendTextMessageAsync(Program.Users[0].Id, "The file could not be read:" + Ex.Message);
             }
             
@@ -197,7 +201,8 @@ namespace WorkScheduleBOT
                 {
 
                 Console.WriteLine(Ex.Message);
-                }
+                BagReport.SetBagAndSave(Ex.Message, Program.pathBagJSON);
+            }
             
         }
         private static void OnTimedEvent2(Object source, System.Timers.ElapsedEventArgs e)
@@ -229,6 +234,7 @@ namespace WorkScheduleBOT
                 {
 
                     Console.WriteLine(Ex.Message);
+                    BagReport.SetBagAndSave(Ex.Message, Program.pathBagJSON);
 
                 }
 
@@ -287,6 +293,7 @@ namespace WorkScheduleBOT
             catch (Exception Ex)
             {
                 await client.SendTextMessageAsync(msg.Chat.Id, Ex.Message);
+                BagReport.SetBagAndSave(Ex.Message, Program.pathBagJSON);
             }
         }
             private static async void DisplayMessageTelegram(object sender, string e)
@@ -302,6 +309,7 @@ namespace WorkScheduleBOT
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
+                    BagReport.SetBagAndSave(ex.Message, Program.pathBagJSON);
                 }
             }
             }
@@ -327,6 +335,7 @@ namespace WorkScheduleBOT
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                BagReport.SetBagAndSave(ex.Message, Program.pathBagJSON);
             }
         }
         //public static string WriteMessage2;

@@ -76,7 +76,8 @@ namespace WorkScheduleBOT
                     catch (Exception e)
                     {
                             Console.WriteLine(e.Message);
-                    }
+                            BagReport.SetBagAndSave(e.Message, Program.pathBagJSON);
+                        }
                     }
                     else if (nameRead == "last")
                     {
@@ -113,6 +114,7 @@ namespace WorkScheduleBOT
                         catch (Exception e)
                         {
                             Console.WriteLine(e.Message);
+                            BagReport.SetBagAndSave(e.Message, Program.pathBagJSON);
                         }
                     }
                 }
@@ -120,6 +122,7 @@ namespace WorkScheduleBOT
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
+                BagReport.SetBagAndSave(e.Message, Program.pathBagJSON);
             }
             return allRowsList;
         }

@@ -34,6 +34,7 @@ namespace WorkScheduleBOT
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
+               
             }
         }
         public void SaveDataJSON(List<User> users)

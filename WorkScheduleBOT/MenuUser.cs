@@ -33,8 +33,10 @@ namespace WorkScheduleBOT
                             replyMarkup: ButtonStart()
                             );
                 }
-                catch (Exception)
-                { }
+                catch (Exception Ex)
+                {
+                    BagReport.SetBagAndSave(Ex.Message, Program.pathBagJSON);
+                }
                 }else if(msg.Text == ExitProfMenu) 
                 {
 
@@ -578,6 +580,19 @@ namespace WorkScheduleBOT
                     catch (Exception) { }
                     user.LastMessage = "empty";
                     break;
+                case BagView:
+                    try
+                    {
+                        foreach (var item in BagReport.GetBag())
+                        {
+
+                        await client.SendTextMessageAsync(
+                        msg.Chat.Id, item);
+                        }
+                    }
+                    catch (Exception) { }
+                    user.LastMessage = "empty";
+                    break;
 
                 default:
                     //try
@@ -598,6 +613,7 @@ namespace WorkScheduleBOT
         }
         
             public const string WhoFeaters = "пошук по даті";
+            public const string BagView = "bag view";
             public const string WhoYesterdayDay = "хто був вчора день?";
             public const string WhoYesterdayNight = "хто був вчора ніч?";
             public const string WhoTomorrowDay = "хто буде завтра день?";
@@ -713,7 +729,8 @@ namespace WorkScheduleBOT
                     new List<KeyboardButton>{ new KeyboardButton {Text = Unfollow } },
                     new List<KeyboardButton>{ new KeyboardButton {Text = "users" } },
                     new List<KeyboardButton>{ new KeyboardButton {Text = "написати" } },
-                    new List<KeyboardButton>{ new KeyboardButton {Text = WriteAll } }
+                    new List<KeyboardButton>{ new KeyboardButton {Text = WriteAll } },
+                    new List<KeyboardButton>{ new KeyboardButton {Text = BagView } }
 
                 }
 
