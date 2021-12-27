@@ -98,8 +98,8 @@ namespace WorkScheduleBOT
             aTimer.Elapsed += OnTimedEvent2;
             aTimer.AutoReset = true;
             aTimer.Enabled = true;
-                ShowWindow(handle, SW_HIDE);
-                //ShowWindow(handle, SW_SHOW);
+                //ShowWindow(handle, SW_HIDE);
+                ShowWindow(handle, SW_SHOW);
                 Console.Read();
                 client.StopReceiving();
             }

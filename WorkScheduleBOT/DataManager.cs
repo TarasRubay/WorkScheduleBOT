@@ -34,7 +34,7 @@ namespace WorkScheduleBOT
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
-               
+                BagReport.SetBagAndSave(e.Message, Program.pathBagJSON);
             }
         }
         public void SaveDataJSON(List<User> users)
@@ -50,6 +50,7 @@ namespace WorkScheduleBOT
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
+                BagReport.SetBagAndSave(e.Message, Program.pathBagJSON);
             }
         }
         public List<User> LoadDataJSON()
@@ -67,6 +68,7 @@ namespace WorkScheduleBOT
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
+                BagReport.SetBagAndSave(e.Message, Program.pathBagJSON);
             }
             return users;
         }
@@ -83,6 +85,8 @@ namespace WorkScheduleBOT
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
+                BagReport.SetBagAndSave(e.Message, Program.pathBagJSON);
+
             }
             return users;
         }
@@ -98,6 +102,7 @@ namespace WorkScheduleBOT
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
+                BagReport.SetBagAndSave(e.Message, Program.pathBagJSON);
             }
         }
         public double LoadDataProcent()
@@ -113,6 +118,7 @@ namespace WorkScheduleBOT
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
+                BagReport.SetBagAndSave(e.Message, Program.pathBagJSON);
             }
             return procent;
         }

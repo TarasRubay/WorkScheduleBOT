@@ -20,6 +20,7 @@ namespace WorkScheduleBOT
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
+                BagReport.SetBagAndSave(e.Message, Program.pathBagJSON);
             }
         }
         public static List<UserInSchedule> LOadData(string path)
@@ -36,6 +37,7 @@ namespace WorkScheduleBOT
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
+                BagReport.SetBagAndSave(e.Message, Program.pathBagJSON);
             }
             return users;
         }
@@ -49,6 +51,7 @@ namespace WorkScheduleBOT
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
+                BagReport.SetBagAndSave(e.Message, Program.pathBagJSON);
             }
         }
         public static List<string> LOadDataWeek(string path)
@@ -65,6 +68,7 @@ namespace WorkScheduleBOT
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
+                BagReport.SetBagAndSave(e.Message, Program.pathBagJSON);
             }
             return listWeek;
         }
