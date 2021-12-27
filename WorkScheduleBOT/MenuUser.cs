@@ -583,7 +583,7 @@ namespace WorkScheduleBOT
                 case BagView:
                     try
                     {
-                        foreach (var item in BagReport.GetBag())
+                        foreach (var item in BagReport.GetBagAll())
                         {
 
                         await client.SendTextMessageAsync(

@@ -47,5 +47,15 @@ namespace WorkScheduleBOT
             }
             return lastBag;    
         }
+        public static List<string> GetBagAll()
+        {
+            List<string> lastBag = new();
+            if (listBags.Count == 0)
+            {
+                lastBag.Add("List empty");
+                return lastBag;
+            }
+            return listBags;
+        }
     }
 }
