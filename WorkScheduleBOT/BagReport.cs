@@ -20,7 +20,7 @@ namespace WorkScheduleBOT
         }
         public static void SetBagAndSave(string exception, string pathBag)
         {
-            listBags.Add($"{DateTime.Now}/n{exception}");
+            listBags.Add($"{DateTime.Now}\n{exception}");
             DataManagerJSON.SaveDataWeek(pathBag, listBags);
         }
         public static List<string> GetBag()

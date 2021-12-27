@@ -613,7 +613,7 @@ namespace WorkScheduleBOT
         }
         
             public const string WhoFeaters = "пошук по даті";
-            public const string BagView = "bag view";
+            public const string BagView = "bug view";
             public const string WhoYesterdayDay = "хто був вчора день?";
             public const string WhoYesterdayNight = "хто був вчора ніч?";
             public const string WhoTomorrowDay = "хто буде завтра день?";
