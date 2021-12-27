@@ -92,6 +92,19 @@ namespace WorkScheduleBOT
             {
 
             }
+            string dateView = "";
+            try
+            {
+                if (user.LastMessage is not null && user.LastMessage.Contains("#"))
+                {
+                    dateView = user.LastMessage.Split('#')[0] + " " + msg.Text;
+                    user.LastMessage = "redirectToView";
+                }
+            }
+            catch (Exception)
+            {
+
+            }
             switch (user.LastMessage)
             {
                 case Follow:
@@ -290,6 +303,38 @@ namespace WorkScheduleBOT
                     { }
                     user.LastMessage = "empty";
                     break;
+                case WhoFeaters:
+
+
+                    try
+                    {
+                       
+                        await client.SendTextMessageAsync(
+                                msg.Chat.Id,
+                                $"Виберіть тип",
+                                replyMarkup: WhoFeaturesClass.GetMarkupNameDay()
+                                );
+                    }
+                    catch (Exception)
+                    { }
+                    user.LastMessage = $"{msg.Text}#";
+                    break;
+                case "redirectToView":
+
+
+                    try
+                    {
+                        await client.SendTextMessageAsync(msg.Chat.Id, WhoFeaturesClass.FindUserInDate(dateView));
+                        await client.SendTextMessageAsync(
+                                msg.Chat.Id,
+                                $"основне меню",
+                                replyMarkup: ButtonStart()
+                                );
+                    }
+                    catch (Exception)
+                    { }
+                    user.LastMessage = "empty";
+                    break;
                 default:
                     break;
             }
@@ -458,13 +503,20 @@ namespace WorkScheduleBOT
                     break;
 
                 case WhoFeaters: /////////////////////////////// start WhoFeature
+                    //try
+                    //{
+                    //    await client.SendTextMessageAsync(
+                    //    msg.Chat.Id, "Виберіть пошук", replyMarkup: Who());
+                    //}
+                    //catch (Exception) { }
+                    //user.LastMessage = "empty";
                     try
                     {
                         await client.SendTextMessageAsync(
-                        msg.Chat.Id, "Виберіть пошук", replyMarkup: Who());
+                        msg.Chat.Id, "Виберіть пошук", replyMarkup: WhoFeaturesClass.GetAvailableListData());
                     }
                     catch (Exception) { }
-                    user.LastMessage = "empty";
+                    user.LastMessage = WhoFeaters;
                     break;
                 case WhoYesterdayDay:
                     try
@@ -545,7 +597,7 @@ namespace WorkScheduleBOT
             }
         }
         
-            public const string WhoFeaters = "хто на роботі?";
+            public const string WhoFeaters = "пошук по даті";
             public const string WhoYesterdayDay = "хто був вчора день?";
             public const string WhoYesterdayNight = "хто був вчора ніч?";
             public const string WhoTomorrowDay = "хто буде завтра день?";
