@@ -132,7 +132,7 @@ namespace WorkScheduleBOT
             catch (Exception Ex)
             {
                 Console.WriteLine(Ex.Message);
-                BagReport.SetBagAndSave(Ex.Message, Program.pathBagJSON);
+                BagReport.SetBagAndSave($"{Ex.Message} CreatingUsersInScheduleFirstStartNew", Program.pathBagJSON);
                 //await client.SendTextMessageAsync(Program.Users[0].Id, Ex.Message);
 
             }
@@ -268,7 +268,7 @@ namespace WorkScheduleBOT
 
                 //await client.SendTextMessageAsync(Program.Users[0].Id, Ex.Message);
                 Console.WriteLine(Ex.Message);
-                BagReport.SetBagAndSave(Ex.Message, Program.pathBagJSON);
+                BagReport.SetBagAndSave($"{Ex.Message} CreatingUsersInScheduleSecondStartNew", Program.pathBagJSON);
             }
             return listHospital;
         }
@@ -398,7 +398,7 @@ namespace WorkScheduleBOT
             {
                 //await client.SendTextMessageAsync(Program.Users[0].Id, Ex.Message);
                 Console.WriteLine(Ex.Message);
-                BagReport.SetBagAndSave(Ex.Message, Program.pathBagJSON);
+                BagReport.SetBagAndSave($"{Ex.Message} CheckUpdateInScedule", Program.pathBagJSON);
             }
             return listHospital;
         }

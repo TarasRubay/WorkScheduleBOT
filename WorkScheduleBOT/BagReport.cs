@@ -45,6 +45,7 @@ namespace WorkScheduleBOT
                 lastBag.Add("List empty");
                 return lastBag;
             }
+            lastBag.Reverse();
             return lastBag;    
         }
         public static List<string> GetBagAll()
