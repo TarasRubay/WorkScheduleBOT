@@ -93,7 +93,7 @@ namespace WorkScheduleBOT
                 client.StartReceiving();
                 client.OnMessage += OnMessageHandler;
                 Console.WriteLine("bot started");
-            aTimer.Interval = 2000;
+            aTimer.Interval = 10000;
             //aTimer.Elapsed += OnTimedEvent;
             aTimer.Elapsed += OnTimedEvent2;
             aTimer.AutoReset = true;
@@ -223,7 +223,7 @@ namespace WorkScheduleBOT
                     //thread.Start();
                     var res = Task.Run(async delegate 
                     {
-                        await Task.Delay(5000, cancellation.Token);
+                        await Task.Delay(10000, cancellation.Token);
                         StartReading();
                         return "Reading is done";
                     });
@@ -308,7 +308,7 @@ namespace WorkScheduleBOT
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.Message);
+                    Console.WriteLine($"{ex.Message} {user.Name} {user.LastMessage}");
                     BagReport.SetBagAndSave(ex.Message, Program.pathBagJSON);
                 }
             }
